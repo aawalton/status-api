@@ -806,7 +806,7 @@ apollo-reporting-protobuf@^3.3.1, apollo-reporting-protobuf@^3.3.2:
 
 apollo-server-core@^3.10.2:
   version "3.10.2"
-  resolved "https://registry.npmjs.org/apollo-server-core/-/apollo-server-core-3.10.2.tgz"
+  resolved "https://registry.yarnpkg.com/apollo-server-core/-/apollo-server-core-3.10.2.tgz#04c5c3fc96b6c7d7f84fdc7356cf9830de4db561"
   integrity sha512-/1o9KPoAMgcjJJ9Y0IH1665wf9d02L/m/mcfBOHiFmRgeGkNgrhTy59BxQTBK241USAWMhwMpp171cv/hM5Dng==
   dependencies:
     "@apollo/utils.keyvaluecache" "^1.0.1"
