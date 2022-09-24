@@ -1,4 +1,4 @@
-const { ApolloServer, gql } = require('apollo-server');
+const { ApolloServer, gql } = require("apollo-server");
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -22,12 +22,12 @@ const typeDefs = gql`
 
 const books = [
   {
-    title: 'The Awakening',
-    author: 'Kate Chopin',
+    title: "The Awakening",
+    author: "Kate Chopin",
   },
   {
-    title: 'City of Glass',
-    author: 'Paul Auster',
+    title: "City of Glass",
+    author: "Paul Auster",
   },
 ];
 
@@ -40,8 +40,8 @@ const resolvers = {
 };
 
 const {
-  ApolloServerPluginLandingPageLocalDefault
-} = require('apollo-server-core');
+  ApolloServerPluginLandingPageLocalDefault,
+} = require("apollo-server-core");
 
 // The ApolloServer constructor requires two parameters: your schema
 // definition and your set of resolvers.
@@ -49,17 +49,15 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   csrfPrevention: true,
-  cache: 'bounded',
+  cache: "bounded",
   /**
    * What's up with this embed: true option?
    * These are our recommended settings for using AS;
    * they aren't the defaults in AS3 for backwards-compatibility reasons but
    * will be the defaults in AS4. For production environments, use
    * ApolloServerPluginLandingPageProductionDefault instead.
-  **/
-  plugins: [
-    ApolloServerPluginLandingPageLocalDefault({ embed: true }),
-  ],
+   * */
+  plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
 });
 
 // The `listen` method launches a web server.
