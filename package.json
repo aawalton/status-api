@@ -6,6 +6,7 @@
   "scripts": {
     "depcheck": "depcheck",
     "start": "ts-node src/index.ts",
+    "lint": "yarn eslint",
     "eslint": "eslint --max-warnings=0 --ext .js,.ts,.jsx,.tsx .",
     "shake": "./node_modules/.bin/ts-unused-exports ./tsconfig.json --excludePathsFromReport=\"\"",
     "prepare": "husky install"
@@ -21,8 +22,15 @@
     "url": "https://gitlab.com/statusai/status-api/issues"
   },
   "homepage": "https://gitlab.com/statusai/status-api#readme",
+  "dependencies": {
+    "@prisma/client": "^4.3.1",
+    "apollo-server": "^3.10.2",
+    "graphql": "^16.6.0"
+  },
   "devDependencies": {
     "@types/node": "^18.7.19",
+    "@typescript-eslint/eslint-plugin": "^5.38.0",
+    "@typescript-eslint/parser": "^5.38.0",
     "depcheck": "^1.4.3",
     "eslint": "^8.24.0",
     "eslint-config-airbnb-base": "^15.0.0",
@@ -37,10 +45,5 @@
     "ts-node": "^10.9.1",
     "ts-unused-exports": "^8.0.0",
     "typescript": "^4.8.3"
-  },
-  "dependencies": {
-    "@prisma/client": "^4.3.1",
-    "apollo-server": "^3.10.2",
-    "graphql": "^16.6.0"
   }
 }
