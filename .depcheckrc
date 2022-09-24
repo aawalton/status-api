@@ -1,3 +1,6 @@
 ignores: [
-  "lint-staged"
+  "lint-staged",
+  "@prisma/client",
+  "prisma",
+  "apollo-server-core"
 ]
