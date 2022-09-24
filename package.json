@@ -4,7 +4,11 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "start": "ts-node src/index.ts"
+    "depcheck": "depcheck",
+    "start": "ts-node src/index.ts",
+    "eslint": "eslint --max-warnings=0 --ext .js,.ts,.jsx,.tsx .",
+    "shake": "./node_modules/.bin/ts-unused-exports ./tsconfig.json --excludePathsFromReport=\"\"",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -19,8 +23,19 @@
   "homepage": "https://gitlab.com/statusai/status-api#readme",
   "devDependencies": {
     "@types/node": "^18.7.19",
+    "depcheck": "^1.4.3",
+    "eslint": "^8.24.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
     "prisma": "^4.3.1",
     "ts-node": "^10.9.1",
+    "ts-unused-exports": "^8.0.0",
     "typescript": "^4.8.3"
   },
   "dependencies": {
