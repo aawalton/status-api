@@ -1,9 +1,45 @@
 {
+  "compileOnSave": true,
   "compilerOptions": {
-    "sourceMap": true,
-    "outDir": "dist",
-    "strict": true,
-    "lib": ["esnext"],
-    "esModuleInterop": true
-  }
+      // Type Checking
+      "noImplicitAny": true,
+      "strictNullChecks": true,
+
+      // Modules
+      "baseUrl": ".",
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "paths": {
+
+      },
+      "typeRoots": [
+          "node_modules/@types"
+      ],
+      "types": [
+          "node",
+      ],
+
+      // Emit
+      "outDir": "dist",
+      "removeComments": true,
+      "sourceMap": true,
+
+      // JavaScript Support
+      "allowJs": true,
+
+      // Interop Constraints
+      "allowSyntheticDefaultImports": true,
+      "esModuleInterop": true,
+      "forceConsistentCasingInFileNames": true,
+
+      // Language and Environment        
+      "experimentalDecorators": true,
+      "target": "ES2020",
+
+      // Completeness
+      "skipLibCheck": true,
+  },
+  "exclude": [
+      "dist"
+  ]
 }
