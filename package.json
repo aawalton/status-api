@@ -2,7 +2,11 @@
   "name": "status-api",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
+  "engines": {
+    "node": "16.17.0"
+  },
+
   "scripts": {
     "depcheck": "depcheck",
     "start": "ts-node src/index.ts",
@@ -24,13 +28,9 @@
   },
   "homepage": "https://gitlab.com/statusai/status-api#readme",
   "dependencies": {
-    "@prisma/client": "^4.3.1",
     "@supabase/supabase-js": "^1.35.7",
-    "apollo-server": "^3.10.2",
-    "apollo-server-core": "^3.10.2",
     "dotenv": "^16.0.2",
-    "graphql": "^16.6.0",
-    "node-fetch": "^3.2.10",
+    "node-fetch": "2.6.1",
     "xml2json": "^0.12.0"
   },
   "devDependencies": {
