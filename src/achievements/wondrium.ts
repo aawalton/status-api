@@ -19,9 +19,9 @@ const baseUrl = 'https://www.wondrium.com'
 const getCollectionUrls = async (): Promise<string[]> => {
   const response = await fetch(`${baseUrl}/media/sitemap.xml`)
   const text = await response.text()
-  const json = await parser.toJson(text)
-  const data = JSON.parse(json)
-  const urls: WondriumURL[] = data.urlset.url
+  const json = parser.toJson(text)
+  const data = JSON.parse(json) as { urlset: { url: WondriumURL[] } }
+  const urls = data.urlset.url
 
   const collections = urls
     .filter((u) => u.loc.includes('/allsubjects'))
@@ -35,11 +35,13 @@ const createCollectionAchievement = async (collectionUrl: string) => {
   const parent = (await supabase
     .from('achievements')
     .select('id')
-    .eq('url', parentUrl)) as { data: { id: string }[]}
+    .eq('url', parentUrl)) as { data: { id: string }[] }
   const parentAchievement = parent ? parent.data[0] : undefined
   const child = (await supabase
     .from('achievements')
-    .upsert({ type: 'collection', url: collectionUrl })) as { data: { id: string }[]}
+    .upsert({ type: 'collection', url: collectionUrl })) as {
+    data: { id: string }[]
+  }
   const childAchievement = child.data[0]
   if (parentAchievement)
     await supabase.from('achievement_children').upsert({
@@ -50,11 +52,10 @@ const createCollectionAchievement = async (collectionUrl: string) => {
 
 const createCollectionAchievements = async () => {
   const collectionUrls = await getCollectionUrls()
-  for (const collectionUrl of collectionUrls)
-    {
-      console.log(collectionUrl)
-      await createCollectionAchievement(collectionUrl)
-    }
+  for (const collectionUrl of collectionUrls) {
+    console.log(collectionUrl)
+    await createCollectionAchievement(collectionUrl)
+  }
 }
 
 const syncWondriumAchievements = async () => {
