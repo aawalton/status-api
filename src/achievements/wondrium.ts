@@ -32,15 +32,15 @@ const getCollectionUrls = async (): Promise<string[]> => {
 
 const createCollectionAchievement = async (collectionUrl: string) => {
   const parentUrl = collectionUrl.split('/').slice(0, -1).join('/')
-  const parentAchievement = (await supabase
+  const parent = (await supabase
     .from('achievements')
-    .select('*')
-    .eq('url', parentUrl)) as unknown as { id: string }
-  const childAchievement = (await supabase
+    .select('id')
+    .eq('url', parentUrl)) as { data: { id: string }[]}
+  const parentAchievement = parent ? parent.data[0] : undefined
+  const child = (await supabase
     .from('achievements')
-    .upsert({ type: 'collection', url: collectionUrl })) as unknown as {
-    id: string
-  }
+    .upsert({ type: 'collection', url: collectionUrl })) as { data: { id: string }[]}
+  const childAchievement = child.data[0]
   if (parentAchievement)
     await supabase.from('achievement_children').upsert({
       parent_achievement_id: parentAchievement.id,
@@ -50,13 +50,15 @@ const createCollectionAchievement = async (collectionUrl: string) => {
 
 const createCollectionAchievements = async () => {
   const collectionUrls = await getCollectionUrls()
-  await createCollectionAchievement(collectionUrls[0])
+  for (const collectionUrl of collectionUrls)
+    {
+      console.log(collectionUrl)
+      await createCollectionAchievement(collectionUrl)
+    }
 }
 
 const syncWondriumAchievements = async () => {
   await createCollectionAchievements()
-
-  const achievements = await supabase.from('achievements').select('*')
 }
 
 export default syncWondriumAchievements
