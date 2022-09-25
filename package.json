@@ -6,7 +6,6 @@
   "engines": {
     "node": "16.17.0"
   },
-
   "scripts": {
     "depcheck": "depcheck",
     "start": "ts-node src/index.ts",
@@ -30,6 +29,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^1.35.7",
     "dotenv": "^16.0.2",
+    "lodash": "^4.17.21",
     "node-fetch": "2.6.1",
     "xml2json": "^0.12.0"
   },

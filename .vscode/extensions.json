@@ -1,8 +1,0 @@
-{
-  "recommendations": [
-    "dbaeumer.vscode-eslint",
-    "steoates.autoimport",
-    "42crunch.vscode-openapi",
-    "eamodio.gitlens"
-  ]
-}
