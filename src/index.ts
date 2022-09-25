@@ -1,5 +1,7 @@
 import { ApolloServer, gql } from "apollo-server";
 import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core";
+import supabase from "./modules/supabase";
+// import syncWondriumAchievements from "./wondrium";
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -62,3 +64,5 @@ void server.listen().then(({ url }: { url: string }) => {
   // eslint-disable-next-line no-console
   console.log(`🚀  Server ready at ${url}`);
 });
+
+// void syncWondriumAchievements()
