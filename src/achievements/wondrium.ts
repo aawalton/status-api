@@ -1,3 +1,6 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
+
 import fetch from 'node-fetch'
 import parser from 'xml2json'
 
@@ -37,12 +40,14 @@ const createCollectionAchievement = async (collectionUrl: string) => {
     .select('id')
     .eq('url', parentUrl)) as { data: { id: string }[] }
   const parentAchievement = parent ? parent.data[0] : undefined
+
   const child = (await supabase
     .from('achievements')
     .upsert({ type: 'collection', url: collectionUrl })) as {
     data: { id: string }[]
   }
   const childAchievement = child.data[0]
+
   if (parentAchievement)
     await supabase.from('achievement_children').upsert({
       parent_achievement_id: parentAchievement.id,
@@ -53,7 +58,6 @@ const createCollectionAchievement = async (collectionUrl: string) => {
 const createCollectionAchievements = async () => {
   const collectionUrls = await getCollectionUrls()
   for (const collectionUrl of collectionUrls) {
-    console.log(collectionUrl)
     await createCollectionAchievement(collectionUrl)
   }
 }
