@@ -61,7 +61,7 @@ const addAchievement = async (achievement: Achievement) => {
           type: 'title',
           title: [{ type: 'text', text: { content: achievement.title } }],
         },
-        // Link: { type: 'url', url: achievement.link },
+        Link: { type: 'url', url: achievement.link },
         ...(!achievement.is_collection
           ? {
               Target: {
