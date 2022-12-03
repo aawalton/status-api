@@ -32,6 +32,7 @@ const addAchievement = async (achievement: Achievement) => {
     },
   })
   const alreadyExists = response.results.length > 0
+  console.log({ alreadyExists })
 
   if (alreadyExists) {
     /* If the achievement already exists, update it */
@@ -56,14 +57,20 @@ const addAchievement = async (achievement: Achievement) => {
 
 const run = async () => {
   /* Pull achievements from the database */
-  const [achievements] = await database.query(
+  const [achievements] = (await database.query(
     'select * from achievements limit 1;'
-  )
+  )) as [Achievement[], unknown]
   console.log(achievements.length)
 
   /* Iterate over achievements, starting with those with no parent */
   for (const achievement of achievements) {
-    await addAchievement(achievement as Achievement)
+    /* Add the achievement */
+    await addAchievement(achievement)
+
+    /* Mark achievement as imported */
+    await database.query(
+      `update achievements set imported_at = now() where id = '${achievement.id}';`
+    )
   }
 
   /* Report success */
