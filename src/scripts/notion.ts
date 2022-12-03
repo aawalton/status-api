@@ -23,11 +23,31 @@ type Achievement = {
   description: string
   link: string
   target: number
-  points: number
+  progress: number
   context: 'passive' | 'active'
   category_name: 'faith' | 'learn' | 'fun'
   type: 'collection' | 'sequence' | 'boolean' | 'integer'
   is_collection: boolean
+  parent_title: string
+}
+
+const getParentAchievementId = async (
+  achievement: Achievement
+): Promise<string | null> => {
+  if (!achievement.parent_title) return null
+
+  /* Find the parent achievement */
+  const parentResponse = await notion.databases.query({
+    database_id: ACHIEVEMENTS_DATABASE_ID,
+    filter: {
+      property: 'title',
+      rich_text: { equals: achievement.parent_title },
+    },
+  })
+  const parentExists = parentResponse.results.length > 0
+  if (achievement.parent_title && !parentExists)
+    throw new Error('Parent not found')
+  return parentResponse.results[0].id
 }
 
 const addAchievement = async (achievement: Achievement) => {
@@ -41,6 +61,9 @@ const addAchievement = async (achievement: Achievement) => {
   })
   const alreadyExists = response.results.length > 0
   console.log(achievement.title, alreadyExists)
+  // console.log(achievement)
+
+  const parentAchievementId = await getParentAchievementId(achievement)
 
   if (alreadyExists) {
     /* If the achievement already exists, update it */
@@ -71,7 +94,7 @@ const addAchievement = async (achievement: Achievement) => {
               },
               Progress: {
                 type: 'number',
-                number: achievement.points,
+                number: _.toNumber(achievement.progress),
               },
             }
           : {}),
@@ -87,6 +110,14 @@ const addAchievement = async (achievement: Achievement) => {
           type: 'select',
           select: { name: _.capitalize(achievement.type) },
         },
+        ...(parentAchievementId
+          ? {
+              Parent: {
+                type: 'relation',
+                relation: [{ id: parentAchievementId }],
+              },
+            }
+          : {}),
       },
     })
   }
@@ -95,9 +126,11 @@ const addAchievement = async (achievement: Achievement) => {
 const run = async () => {
   /* Pull achievements from the database */
   const [achievements] = (await database.query(
-    `select * from achievements a1
+    `select *, (select title from achievements a2 where a1.parent_achievement_id = a2.id) as parent_title
+    from achievements a1
     where parent_achievement_id is null and imported_at is null
-    or (select imported_at from achievements a2 where a1.parent_achievement_id = a2.id) is not null;`
+    or (select imported_at from achievements a2 where a1.parent_achievement_id = a2.id) is not null
+    ;`
   )) as [Achievement[], unknown]
   console.log(achievements.length)
 
