@@ -27,6 +27,7 @@
   },
   "homepage": "https://gitlab.com/statusai/status-api#readme",
   "dependencies": {
+    "@notionhq/client": "^2.2.2",
     "@supabase/supabase-js": "^1.35.7",
     "dotenv": "^16.0.2",
     "lodash": "^4.17.21",
