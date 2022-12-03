@@ -122,7 +122,7 @@ const run = async () => {
     `select *, (select title from achievements a2 where a1.parent_achievement_id = a2.id) as parent_title
     from achievements a1
     where parent_achievement_id is null and imported_at is null
-    or (select imported_at from achievements a2 where a1.parent_achievement_id = a2.id) is not null
+    or (select imported_at from achievements a2 where a1.parent_achievement_id = a2.id) is not null and imported_at is null
     ;`
   )) as [Achievement[], unknown]
   console.log(achievements.length)
