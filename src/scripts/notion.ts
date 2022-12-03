@@ -23,7 +23,7 @@ type Achievement = {
   description: string
   link: string
   target: number
-  progress: number
+  points: number
   context: 'passive' | 'active'
   category_name: 'faith' | 'learn' | 'fun'
   type: 'collection' | 'sequence' | 'boolean' | 'integer'
@@ -40,7 +40,7 @@ const addAchievement = async (achievement: Achievement) => {
     },
   })
   const alreadyExists = response.results.length > 0
-  console.log({ alreadyExists })
+  console.log(achievement.title, alreadyExists)
 
   if (alreadyExists) {
     /* If the achievement already exists, update it */
@@ -53,7 +53,6 @@ const addAchievement = async (achievement: Achievement) => {
     })
   } else {
     /* If the achievement doesn't exist, add it */
-    console.log(achievement)
     await notion.pages.create({
       parent: { database_id: ACHIEVEMENTS_DATABASE_ID },
       properties: {
@@ -61,7 +60,9 @@ const addAchievement = async (achievement: Achievement) => {
           type: 'title',
           title: [{ type: 'text', text: { content: achievement.title } }],
         },
-        Link: { type: 'url', url: achievement.link },
+        ...(achievement.link
+          ? { Link: { type: 'url', url: achievement.link } }
+          : {}),
         ...(!achievement.is_collection
           ? {
               Target: {
@@ -70,22 +71,22 @@ const addAchievement = async (achievement: Achievement) => {
               },
               Progress: {
                 type: 'number',
-                number: achievement.progress,
+                number: achievement.points,
               },
             }
           : {}),
-        // Context: {
-        //   type: 'select',
-        //   select: { name: _.capitalize(achievement.context) },
-        // },
-        // Category: {
-        //   type: 'select',
-        //   select: { name: _.capitalize(achievement.category_name) },
-        // },
-        // Type: {
-        //   type: 'select',
-        //   select: { name: _.capitalize(achievement.type) },
-        // },
+        Context: {
+          type: 'select',
+          select: { name: _.capitalize(achievement.context) },
+        },
+        Category: {
+          type: 'select',
+          select: { name: _.capitalize(achievement.category_name) },
+        },
+        Type: {
+          type: 'select',
+          select: { name: _.capitalize(achievement.type) },
+        },
       },
     })
   }
@@ -96,8 +97,7 @@ const run = async () => {
   const [achievements] = (await database.query(
     `select * from achievements a1
     where parent_achievement_id is null and imported_at is null
-    or (select imported_at from achievements a2 where a1.parent_achievement_id = a2.id) is not null
-    limit 1;`
+    or (select imported_at from achievements a2 where a1.parent_achievement_id = a2.id) is not null;`
   )) as [Achievement[], unknown]
   console.log(achievements.length)
 
