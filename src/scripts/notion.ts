@@ -66,14 +66,7 @@ const addAchievement = async (achievement: Achievement) => {
   const parentAchievementId = await getParentAchievementId(achievement)
 
   if (alreadyExists) {
-    /* If the achievement already exists, update it */
-    await notion.databases.query({
-      database_id: ACHIEVEMENTS_DATABASE_ID,
-      filter: {
-        property: 'title',
-        rich_text: { equals: achievement.title },
-      },
-    })
+    /* If the achievement already exists, ignore it */
   } else {
     /* If the achievement doesn't exist, add it */
     await notion.pages.create({
