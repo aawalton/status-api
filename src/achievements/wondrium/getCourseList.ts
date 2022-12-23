@@ -13,6 +13,8 @@ import puppeteer from 'puppeteer'
 
 import database from '../../modules/database'
 
+const wondriumCategoryId = '9ccc4dc2-4dfe-42a6-b6aa-3480a6448e9b'
+
 export const getCourseList = async () => {
   /* Set up puppeteer */
   const browser = await puppeteer.launch()
@@ -41,7 +43,10 @@ export const getCourseList = async () => {
   /* Create top-level categories in the database */
   const subjects = hrefs.filter((url) => url.includes('/allsubjects/'))
   const collections = hrefs.filter((url) => url.includes('/collections/'))
-  const categories = [...subjects, ...collections].map((url) => ({ url }))
+  const categories = [...subjects, ...collections].map((url) => ({
+    url,
+    parentCategoryId: wondriumCategoryId,
+  }))
   await database.wondriumCategories.bulkCreate(categories, {
     ignoreDuplicates: true,
   })
