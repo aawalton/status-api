@@ -49,6 +49,9 @@ export const getCourseList = async () => {
     ignoreDuplicates: true,
   })
 
+  /* Shut down puppeteer */
+  await browser.close()
+
   /* Return success */
   process.exit(0)
 }
