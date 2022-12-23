@@ -35,6 +35,7 @@
     "pg": "^8.8.0",
     "puppeteer": "^19.4.1",
     "sequelize": "^6.26.0",
+    "sequelize-auto": "^0.8.8",
     "xml2json": "^0.12.0"
   },
   "devDependencies": {
