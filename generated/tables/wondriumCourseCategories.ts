@@ -8,11 +8,12 @@ export interface wondriumCourseCategoriesAttributes {
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
+  achievementId?: string;
 }
 
 export type wondriumCourseCategoriesPk = "id";
 export type wondriumCourseCategoriesId = wondriumCourseCategories[wondriumCourseCategoriesPk];
-export type wondriumCourseCategoriesOptionalAttributes = "id" | "createdAt" | "updatedAt" | "deletedAt";
+export type wondriumCourseCategoriesOptionalAttributes = "id" | "createdAt" | "updatedAt" | "deletedAt" | "achievementId";
 export type wondriumCourseCategoriesCreationAttributes = Optional<wondriumCourseCategoriesAttributes, wondriumCourseCategoriesOptionalAttributes>;
 
 export class wondriumCourseCategories extends Model<wondriumCourseCategoriesAttributes, wondriumCourseCategoriesCreationAttributes> implements wondriumCourseCategoriesAttributes {
@@ -22,6 +23,7 @@ export class wondriumCourseCategories extends Model<wondriumCourseCategoriesAttr
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
+  achievementId?: string;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof wondriumCourseCategories {
@@ -58,6 +60,11 @@ export class wondriumCourseCategories extends Model<wondriumCourseCategoriesAttr
       type: DataTypes.DATE,
       allowNull: true,
       field: 'deleted_at'
+    },
+    achievementId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      field: 'achievement_id'
     }
   }, {
     sequelize,
