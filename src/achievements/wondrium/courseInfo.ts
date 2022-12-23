@@ -14,7 +14,7 @@ import { Op } from 'sequelize'
 
 import database from '../../modules/database'
 
-export const getCourseInfo = async () => {
+export const getCourseInfo = async (): Promise<void> => {
   /* Set up puppeteer */
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
@@ -39,8 +39,10 @@ export const getCourseInfo = async () => {
     as.map((s) => s.textContent)
   )
   const title = titles[0]
-  if (!title) throw new Error(`Title not found for ${url}`)
-  console.log(title)
+  if (!title) {
+    await course.update({ title: '' })
+    return getCourseInfo()
+  }
 
   /* Find the description */
   const descriptions = await page.$$eval(
@@ -63,7 +65,7 @@ export const getCourseInfo = async () => {
   await browser.close()
 
   /* See if there are more to process */
-  await getCourseInfo()
+  return getCourseInfo()
 }
 
 void getCourseInfo()
