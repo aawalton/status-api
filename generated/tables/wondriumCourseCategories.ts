@@ -1,6 +1,5 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { achievements, achievementsId } from './achievements';
 
 export interface wondriumCourseCategoriesAttributes {
   id: string;
@@ -28,11 +27,6 @@ export class wondriumCourseCategories extends Model<wondriumCourseCategoriesAttr
   updatedAt?: Date;
   deletedAt?: Date;
 
-  // wondriumCourseCategories belongsTo achievements via achievementId
-  achievement!: achievements;
-  getAchievement!: Sequelize.BelongsToGetAssociationMixin<achievements>;
-  setAchievement!: Sequelize.BelongsToSetAssociationMixin<achievements, achievementsId>;
-  createAchievement!: Sequelize.BelongsToCreateAssociationMixin<achievements>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof wondriumCourseCategories {
     return wondriumCourseCategories.init({
@@ -55,10 +49,6 @@ export class wondriumCourseCategories extends Model<wondriumCourseCategoriesAttr
     achievementId: {
       type: DataTypes.UUID,
       allowNull: true,
-      references: {
-        model: 'achievements',
-        key: 'id'
-      },
       field: 'achievement_id'
     },
     indexedAt: {

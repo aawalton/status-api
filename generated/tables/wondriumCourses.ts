@@ -52,7 +52,8 @@ export class wondriumCourses extends Model<wondriumCoursesAttributes, wondriumCo
     },
     episodes: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: true,
+      defaultValue: 0
     },
     indexedAt: {
       type: DataTypes.DATE,
