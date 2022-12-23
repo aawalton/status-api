@@ -20,7 +20,7 @@ export const findOrCreateAchievementForCategory = async (
       throw new Error(
         `achievement not found for ${_.toString(category.achievementId)}`
       )
-    console.log(`found achievement for ${category.title}`)
+    console.log(new Date(), `found achievement for ${category.title}`)
     return achievement
   }
 
@@ -43,7 +43,7 @@ export const findOrCreateAchievementForCategory = async (
   if (achievement) {
     /* If there is an achievement, link it */
     await category.update({ achievementId: achievement.id })
-    console.log(`linked achievement for ${category.title}`)
+    console.log(new Date(), `linked achievement for ${category.title}`)
     return achievement
   }
 
@@ -57,7 +57,7 @@ export const findOrCreateAchievementForCategory = async (
     link: category.url,
   })
   await category.update({ achievementId: newAchievement.id })
-  console.log(`created achievement for ${category.title}`)
+  console.log(new Date(), `created achievement for ${category.title}`)
   return newAchievement
 }
 
@@ -82,7 +82,7 @@ export const findOrCreateAchievementsForCourseCategory = async (
       throw new Error(
         `achievement not found for ${_.toString(courseCategory.achievementId)}`
       )
-    console.log(`found achievement for ${_.toString(course.title)}`)
+    console.log(new Date(), `found achievement for ${_.toString(course.title)}`)
     return achievement
   }
 
@@ -112,7 +112,7 @@ export const findOrCreateAchievementsForCourseCategory = async (
   if (achievement) {
     /* If there is an achievement, link it */
     await courseCategory.update({ achievementId: achievement.id })
-    console.log(`linked achievement for ${course.title}`)
+    console.log(new Date(), `linked achievement for ${course.title}`)
     return achievement
   }
   /* Otherwise, create one */
@@ -125,6 +125,6 @@ export const findOrCreateAchievementsForCourseCategory = async (
     link: course.url,
   })
   await courseCategory.update({ achievementId: newAchievement.id })
-  console.log(`created achievement for ${course.title}`)
+  console.log(new Date(), `created achievement for ${course.title}`)
   return newAchievement
 }
