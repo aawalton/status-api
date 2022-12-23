@@ -41,6 +41,7 @@ export const getCourseInfo = async (): Promise<void> => {
   const title = titles[0]
   if (!title) {
     await course.update({ title: '' })
+    console.log(`skipping ${url}`)
     return getCourseInfo()
   }
 
