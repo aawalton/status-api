@@ -7,8 +7,8 @@ export interface wondriumCoursesAttributes {
   title?: string;
   description?: string;
   episodes?: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   deletedAt?: Date;
 }
 
@@ -23,8 +23,8 @@ export class wondriumCourses extends Model<wondriumCoursesAttributes, wondriumCo
   title?: string;
   description?: string;
   episodes?: number;
-  createdAt!: Date;
-  updatedAt!: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   deletedAt?: Date;
 
 
@@ -51,12 +51,29 @@ export class wondriumCourses extends Model<wondriumCoursesAttributes, wondriumCo
     episodes: {
       type: DataTypes.INTEGER,
       allowNull: true
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'created_at'
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'updated_at'
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'deleted_at'
     }
   }, {
     sequelize,
     tableName: 'wondrium_courses',
     schema: 'public',
-    timestamps: true,
+    timestamps: false,
     paranoid: true,
     underscored: true,
     indexes: [

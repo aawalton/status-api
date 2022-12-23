@@ -2,7 +2,7 @@ import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { categories, categoriesId } from './categories';
 
-export interface colorsAttributes {
+export interface achievementColorsAttributes {
   id: string;
   name: string;
   createdAt: Date;
@@ -10,19 +10,19 @@ export interface colorsAttributes {
   deletedAt?: Date;
 }
 
-export type colorsPk = "id";
-export type colorsId = colors[colorsPk];
-export type colorsOptionalAttributes = "id" | "createdAt" | "updatedAt" | "deletedAt";
-export type colorsCreationAttributes = Optional<colorsAttributes, colorsOptionalAttributes>;
+export type achievementColorsPk = "id";
+export type achievementColorsId = achievementColors[achievementColorsPk];
+export type achievementColorsOptionalAttributes = "id" | "createdAt" | "updatedAt" | "deletedAt";
+export type achievementColorsCreationAttributes = Optional<achievementColorsAttributes, achievementColorsOptionalAttributes>;
 
-export class colors extends Model<colorsAttributes, colorsCreationAttributes> implements colorsAttributes {
+export class achievementColors extends Model<achievementColorsAttributes, achievementColorsCreationAttributes> implements achievementColorsAttributes {
   id!: string;
   name!: string;
   createdAt!: Date;
   updatedAt!: Date;
   deletedAt?: Date;
 
-  // colors hasMany categories via color
+  // achievementColors hasMany categories via color
   categories!: categories[];
   getCategories!: Sequelize.HasManyGetAssociationsMixin<categories>;
   setCategories!: Sequelize.HasManySetAssociationsMixin<categories, categoriesId>;
@@ -35,8 +35,8 @@ export class colors extends Model<colorsAttributes, colorsCreationAttributes> im
   hasCategories!: Sequelize.HasManyHasAssociationsMixin<categories, categoriesId>;
   countCategories!: Sequelize.HasManyCountAssociationsMixin;
 
-  static initModel(sequelize: Sequelize.Sequelize): typeof colors {
-    return colors.init({
+  static initModel(sequelize: Sequelize.Sequelize): typeof achievementColors {
+    return achievementColors.init({
     id: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -67,7 +67,7 @@ export class colors extends Model<colorsAttributes, colorsCreationAttributes> im
     }
   }, {
     sequelize,
-    tableName: 'colors',
+    tableName: 'achievement_colors',
     schema: 'public',
     timestamps: false,
     paranoid: true,

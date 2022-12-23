@@ -47,12 +47,29 @@ export class profiles extends Model<profilesAttributes, profilesCreationAttribut
     website: {
       type: DataTypes.TEXT,
       allowNull: true
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'created_at'
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'updated_at'
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'deleted_at'
     }
   }, {
     sequelize,
     tableName: 'profiles',
     schema: 'public',
-    timestamps: true,
+    timestamps: false,
     paranoid: true,
     underscored: true,
     indexes: [

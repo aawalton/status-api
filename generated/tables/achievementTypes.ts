@@ -47,12 +47,29 @@ export class achievementTypes extends Model<achievementTypesAttributes, achievem
       type: DataTypes.TEXT,
       allowNull: false,
       unique: "achievement_types_name_key"
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'created_at'
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'updated_at'
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'deleted_at'
     }
   }, {
     sequelize,
     tableName: 'achievement_types',
     schema: 'public',
-    timestamps: true,
+    timestamps: false,
     paranoid: true,
     underscored: true,
     indexes: [

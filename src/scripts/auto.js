@@ -17,7 +17,7 @@ const auto = new SequelizeAuto(sequelize, null, null, {
   schema: 'public',
   lang: 'ts',
   additional: {
-    timestamps: true,
+    timestamps: false,
     underscored: true,
     paranoid: true,
   },

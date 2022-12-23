@@ -6,8 +6,8 @@ export interface wondriumCategoriesAttributes {
   url: string;
   title: string;
   parentCategoryId?: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   deletedAt?: Date;
 }
 
@@ -21,8 +21,8 @@ export class wondriumCategories extends Model<wondriumCategoriesAttributes, wond
   url!: string;
   title!: string;
   parentCategoryId?: number;
-  createdAt!: Date;
-  updatedAt!: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   deletedAt?: Date;
 
 
@@ -46,12 +46,29 @@ export class wondriumCategories extends Model<wondriumCategoriesAttributes, wond
       type: DataTypes.BIGINT,
       allowNull: true,
       field: 'parent_category_id'
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'created_at'
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'updated_at'
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'deleted_at'
     }
   }, {
     sequelize,
     tableName: 'wondrium_categories',
     schema: 'public',
-    timestamps: true,
+    timestamps: false,
     paranoid: true,
     underscored: true,
     indexes: [

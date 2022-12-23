@@ -1,7 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { achievementColors, achievementColorsId } from './achievementColors';
 import type { achievements, achievementsId } from './achievements';
-import type { colors, colorsId } from './colors';
 
 export interface categoriesAttributes {
   id: string;
@@ -25,6 +25,11 @@ export class categories extends Model<categoriesAttributes, categoriesCreationAt
   updatedAt!: Date;
   deletedAt?: Date;
 
+  // categories belongsTo achievementColors via color
+  colorAchievementColor!: achievementColors;
+  getColorAchievementColor!: Sequelize.BelongsToGetAssociationMixin<achievementColors>;
+  setColorAchievementColor!: Sequelize.BelongsToSetAssociationMixin<achievementColors, achievementColorsId>;
+  createColorAchievementColor!: Sequelize.BelongsToCreateAssociationMixin<achievementColors>;
   // categories hasMany achievements via categoryName
   achievements!: achievements[];
   getAchievements!: Sequelize.HasManyGetAssociationsMixin<achievements>;
@@ -37,11 +42,6 @@ export class categories extends Model<categoriesAttributes, categoriesCreationAt
   hasAchievement!: Sequelize.HasManyHasAssociationMixin<achievements, achievementsId>;
   hasAchievements!: Sequelize.HasManyHasAssociationsMixin<achievements, achievementsId>;
   countAchievements!: Sequelize.HasManyCountAssociationsMixin;
-  // categories belongsTo colors via color
-  colorColor!: colors;
-  getColorColor!: Sequelize.BelongsToGetAssociationMixin<colors>;
-  setColorColor!: Sequelize.BelongsToSetAssociationMixin<colors, colorsId>;
-  createColorColor!: Sequelize.BelongsToCreateAssociationMixin<colors>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof categories {
     return categories.init({
@@ -61,15 +61,32 @@ export class categories extends Model<categoriesAttributes, categoriesCreationAt
       allowNull: false,
       defaultValue: "blue",
       references: {
-        model: 'colors',
+        model: 'achievement_colors',
         key: 'name'
       }
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'created_at'
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'updated_at'
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'deleted_at'
     }
   }, {
     sequelize,
     tableName: 'categories',
     schema: 'public',
-    timestamps: true,
+    timestamps: false,
     paranoid: true,
     underscored: true,
     indexes: [

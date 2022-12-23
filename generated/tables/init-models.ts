@@ -1,4 +1,6 @@
 import type { Sequelize } from "sequelize";
+import { achievementColors as _achievementColors } from "./achievementColors";
+import type { achievementColorsAttributes, achievementColorsCreationAttributes } from "./achievementColors";
 import { achievementPoints as _achievementPoints } from "./achievementPoints";
 import type { achievementPointsAttributes, achievementPointsCreationAttributes } from "./achievementPoints";
 import { achievementTypes as _achievementTypes } from "./achievementTypes";
@@ -7,8 +9,6 @@ import { achievements as _achievements } from "./achievements";
 import type { achievementsAttributes, achievementsCreationAttributes } from "./achievements";
 import { categories as _categories } from "./categories";
 import type { categoriesAttributes, categoriesCreationAttributes } from "./categories";
-import { colors as _colors } from "./colors";
-import type { colorsAttributes, colorsCreationAttributes } from "./colors";
 import { esoCharacters as _esoCharacters } from "./esoCharacters";
 import type { esoCharactersAttributes, esoCharactersCreationAttributes } from "./esoCharacters";
 import { esoSkills as _esoSkills } from "./esoSkills";
@@ -25,11 +25,11 @@ import { wondriumCourses as _wondriumCourses } from "./wondriumCourses";
 import type { wondriumCoursesAttributes, wondriumCoursesCreationAttributes } from "./wondriumCourses";
 
 export {
+  _achievementColors as achievementColors,
   _achievementPoints as achievementPoints,
   _achievementTypes as achievementTypes,
   _achievements as achievements,
   _categories as categories,
-  _colors as colors,
   _esoCharacters as esoCharacters,
   _esoSkills as esoSkills,
   _esoZones as esoZones,
@@ -40,6 +40,8 @@ export {
 };
 
 export type {
+  achievementColorsAttributes,
+  achievementColorsCreationAttributes,
   achievementPointsAttributes,
   achievementPointsCreationAttributes,
   achievementTypesAttributes,
@@ -48,8 +50,6 @@ export type {
   achievementsCreationAttributes,
   categoriesAttributes,
   categoriesCreationAttributes,
-  colorsAttributes,
-  colorsCreationAttributes,
   esoCharactersAttributes,
   esoCharactersCreationAttributes,
   esoSkillsAttributes,
@@ -67,11 +67,11 @@ export type {
 };
 
 export function initModels(sequelize: Sequelize) {
+  const achievementColors = _achievementColors.initModel(sequelize);
   const achievementPoints = _achievementPoints.initModel(sequelize);
   const achievementTypes = _achievementTypes.initModel(sequelize);
   const achievements = _achievements.initModel(sequelize);
   const categories = _categories.initModel(sequelize);
-  const colors = _colors.initModel(sequelize);
   const esoCharacters = _esoCharacters.initModel(sequelize);
   const esoSkills = _esoSkills.initModel(sequelize);
   const esoZones = _esoZones.initModel(sequelize);
@@ -80,6 +80,8 @@ export function initModels(sequelize: Sequelize) {
   const wondriumCourseCategories = _wondriumCourseCategories.initModel(sequelize);
   const wondriumCourses = _wondriumCourses.initModel(sequelize);
 
+  categories.belongsTo(achievementColors, { foreignKey: "color"});
+  achievementColors.hasMany(categories, { foreignKey: "color"});
   achievements.belongsTo(achievementPoints, { foreignKey: "points"});
   achievementPoints.hasMany(achievements, { foreignKey: "points"});
   achievements.belongsTo(achievementTypes, { foreignKey: "type"});
@@ -88,15 +90,13 @@ export function initModels(sequelize: Sequelize) {
   achievements.hasMany(achievements, { foreignKey: "parentAchievementId"});
   achievements.belongsTo(categories, { foreignKey: "categoryName"});
   categories.hasMany(achievements, { foreignKey: "categoryName"});
-  categories.belongsTo(colors, { foreignKey: "color"});
-  colors.hasMany(categories, { foreignKey: "color"});
 
   return {
+    achievementColors: achievementColors,
     achievementPoints: achievementPoints,
     achievementTypes: achievementTypes,
     achievements: achievements,
     categories: categories,
-    colors: colors,
     esoCharacters: esoCharacters,
     esoSkills: esoSkills,
     esoZones: esoZones,
