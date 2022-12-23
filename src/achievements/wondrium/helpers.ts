@@ -38,7 +38,7 @@ export const findOrCreateAchievementForCategory = async (
   /* Check if there is an achievement that isn't linked */
   const achievementTitle = `Watch all of Wondrium ${category.title}`
   const achievement = await database.achievements.findOne({
-    where: { title: achievementTitle },
+    where: { link: category.url },
   })
   if (achievement) {
     /* If there is an achievement, link it */
