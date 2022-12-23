@@ -17,20 +17,11 @@ export const signIntoWondrium = async () => {
   const timeout = 300000
   page.setDefaultTimeout(timeout)
 
-  console.log('set viewport')
-  {
-    const targetPage = page
-    await targetPage.setViewport({ width: 1636, height: 1321 })
-  }
-
   console.log('navigate to https://www.wondrium.com/allprograms')
-  {
-    const targetPage = page
-    const promises = []
-    promises.push(targetPage.waitForNavigation())
-    await targetPage.goto('https://www.wondrium.com/allprograms')
-    await Promise.all(promises)
-  }
+  const promises = []
+  promises.push(page.waitForNavigation())
+  await page.goto('https://www.wondrium.com/allprograms')
+  await Promise.all(promises)
 
   console.log('find all course links')
   const hrefs = await page.$$eval('div.course-list a', (as) =>
