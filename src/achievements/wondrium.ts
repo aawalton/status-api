@@ -1,69 +1,180 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-param-reassign */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import puppeteer from 'puppeteer'
 
-import fetch from 'node-fetch'
-import parser from 'xml2json'
+import { scrollIntoViewIfNeeded, waitForSelectors } from '../modules/puppeteer'
 
-import supabase from '../modules/supabase'
+export const signIntoWondrium = async () => {
+  const browser = await puppeteer.launch()
+  const page = await browser.newPage()
+  const timeout = 5000
+  page.setDefaultTimeout(timeout)
 
-type WondriumURL = {
-  loc: string
-  lastmod: string
-  changefreq: string
-  priority: string
-  'image:image'?: {
-    'image:loc': string
-    'image:title': string
+  {
+    const targetPage = page
+    await targetPage.setViewport({ width: 1146, height: 1311 })
   }
-}
 
-const baseUrl = 'https://www.wondrium.com'
-
-const getCollectionUrls = async (): Promise<string[]> => {
-  const response = await fetch(`${baseUrl}/media/sitemap.xml`)
-  const text = await response.text()
-  const json = parser.toJson(text)
-  const data = JSON.parse(json) as { urlset: { url: WondriumURL[] } }
-  const urls = data.urlset.url
-
-  const collections = urls
-    .filter((u) => u.loc.includes('/allsubjects'))
-    .map((u) => u.loc)
-
-  return collections
-}
-
-const createCollectionAchievement = async (collectionUrl: string) => {
-  const parentUrl = collectionUrl.split('/').slice(0, -1).join('/')
-  const parent = (await supabase
-    .from('achievements')
-    .select('id')
-    .eq('url', parentUrl)) as { data: { id: string }[] }
-  const parentAchievement = parent ? parent.data[0] : undefined
-
-  const child = (await supabase
-    .from('achievements')
-    .upsert({ type: 'collection', url: collectionUrl })) as {
-    data: { id: string }[]
+  {
+    const targetPage = page
+    const promises = []
+    promises.push(targetPage.waitForNavigation())
+    await targetPage.goto('https://www.wondrium.com/')
+    await Promise.all(promises)
   }
-  const childAchievement = child.data[0]
 
-  if (parentAchievement)
-    await supabase.from('achievement_children').upsert({
-      parent_achievement_id: parentAchievement.id,
-      child_achievement_id: childAchievement.id,
+  {
+    const targetPage = page
+    await scrollIntoViewIfNeeded(
+      [
+        ['#sign-in-btn > a > button > span'],
+        ['xpath///*[@id="sign-in-btn"]/a/button/span'],
+      ],
+      targetPage,
+      timeout
+    )
+    const element = await waitForSelectors(
+      [
+        ['#sign-in-btn > a > button > span'],
+        ['xpath///*[@id="sign-in-btn"]/a/button/span'],
+      ],
+      targetPage,
+      { timeout, visible: true }
+    )
+    await element.click({
+      offset: {
+        x: 15.53057861328125,
+        y: 12.97760009765625,
+      },
     })
-}
-
-const createCollectionAchievements = async () => {
-  const collectionUrls = await getCollectionUrls()
-  for (const collectionUrl of collectionUrls) {
-    await createCollectionAchievement(collectionUrl)
+  }
+  {
+    const targetPage = page
+    await scrollIntoViewIfNeeded(
+      [['aria/Your Email'], ['#email'], ['xpath///*[@id="email"]']],
+      targetPage,
+      timeout
+    )
+    const element = await waitForSelectors(
+      [['aria/Your Email'], ['#email'], ['xpath///*[@id="email"]']],
+      targetPage,
+      { timeout, visible: true }
+    )
+    await element.click({
+      offset: {
+        x: 93.359375,
+        y: 18,
+      },
+    })
+  }
+  {
+    const targetPage = page
+    await scrollIntoViewIfNeeded(
+      [['aria/Your Email'], ['#email'], ['xpath///*[@id="email"]']],
+      targetPage,
+      timeout
+    )
+    const element = await waitForSelectors(
+      [['aria/Your Email'], ['#email'], ['xpath///*[@id="email"]']],
+      targetPage,
+      { timeout, visible: true }
+    )
+    const type = await element.evaluate((el: { type: any }) => el.type)
+    if (['select-one'].includes(type)) {
+      await element.select('aawalton@gmail.com')
+    } else if (
+      [
+        'textarea',
+        'text',
+        'url',
+        'tel',
+        'search',
+        'password',
+        'number',
+        'email',
+      ].includes(type)
+    ) {
+      await element.type('aawalton@gmail.com')
+    } else {
+      await element.focus()
+      await element.evaluate(
+        (
+          el: { value: any; dispatchEvent: (arg0: Event) => void },
+          value: any
+        ) => {
+          el.value = value
+          el.dispatchEvent(new Event('input', { bubbles: true }))
+          el.dispatchEvent(new Event('change', { bubbles: true }))
+        },
+        'aawalton@gmail.com'
+      )
+    }
+  }
+  {
+    const targetPage = page
+    await scrollIntoViewIfNeeded(
+      [['aria/Your Password'], ['#pass'], ['xpath///*[@id="pass"]']],
+      targetPage,
+      timeout
+    )
+    const element = await waitForSelectors(
+      [['aria/Your Password'], ['#pass'], ['xpath///*[@id="pass"]']],
+      targetPage,
+      { timeout, visible: true }
+    )
+    await element.click({
+      offset: {
+        x: 81.359375,
+        y: 19,
+      },
+    })
+  }
+  {
+    const targetPage = page
+    await scrollIntoViewIfNeeded(
+      [['aria/Your Password'], ['#pass'], ['xpath///*[@id="pass"]']],
+      targetPage,
+      timeout
+    )
+    const element = await waitForSelectors(
+      [['aria/Your Password'], ['#pass'], ['xpath///*[@id="pass"]']],
+      targetPage,
+      { timeout, visible: true }
+    )
+    const type = await element.evaluate((el: { type: any }) => el.type)
+    if (['select-one'].includes(type)) {
+      await element.select('bxv@cvp5FPT!ptp0zvu')
+    } else if (
+      [
+        'textarea',
+        'text',
+        'url',
+        'tel',
+        'search',
+        'password',
+        'number',
+        'email',
+      ].includes(type)
+    ) {
+      await element.type('bxv@cvp5FPT!ptp0zvu')
+    } else {
+      await element.focus()
+      await element.evaluate(
+        (
+          el: { value: any; dispatchEvent: (arg0: Event) => void },
+          value: any
+        ) => {
+          el.value = value
+          el.dispatchEvent(new Event('input', { bubbles: true }))
+          el.dispatchEvent(new Event('change', { bubbles: true }))
+        },
+        'bxv@cvp5FPT!ptp0zvu'
+      )
+    }
   }
 }
-
-const syncWondriumAchievements = async () => {
-  await createCollectionAchievements()
-}
-
-export default syncWondriumAchievements

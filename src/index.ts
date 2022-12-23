@@ -1,3 +1,3 @@
-import syncWondriumAchievements from './achievements/wondrium'
+import syncWondriumAchievements from './scripts/wondrium'
 
 void syncWondriumAchievements()
