@@ -21,18 +21,15 @@ export const getCourseList = async () => {
   page.setDefaultTimeout(timeout)
 
   /* Load the page */
-  console.log('navigate to https://www.wondrium.com/allprograms')
   const promises = []
   promises.push(page.waitForNavigation())
   await page.goto('https://www.wondrium.com/allprograms')
   await Promise.all(promises)
 
   /* Find the course links */
-  console.log('find all course links')
   const hrefs = await page.$$eval('div.course-list a', (as) =>
     as.map((a) => a.href)
   )
-  console.log(hrefs.length)
 
   /* Create courses in the database */
   const courses = hrefs

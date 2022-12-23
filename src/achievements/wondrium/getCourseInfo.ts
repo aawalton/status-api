@@ -41,10 +41,9 @@ export const getCourseInfo = async (): Promise<void> => {
   const title = titles[0]
   if (!title) {
     await course.update({ title: '' })
-    console.log(`skipping ${url}`)
     return getCourseInfo()
   }
-  console.log(title)
+  console.log(new Date(), `loaded info for ${title}`)
 
   /* Find the description */
   const descriptions = await page.$$eval(

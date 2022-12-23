@@ -29,32 +29,27 @@ export const getSubCategories = async () => {
   })
   const url = category?.url
   if (!url) return undefined
+  console.log(new Date(), `loading sub categories for ${category.title}`)
 
   /* Load the page */
-  console.log(`navigate to ${url}`)
   const promises = []
   promises.push(page.waitForNavigation())
   await page.goto(url)
   await Promise.all(promises)
 
   /* Find the title */
-  console.log('find the title')
   const titles = await page.$$eval('span.h1', (as) =>
     as.map((s) => s.textContent)
   )
   const title = titles[0]
   if (!title) throw new Error(`Title not found for ${url}`)
-  console.log(title)
 
   /* Find the subcategory links */
-  console.log('find all subcategory links')
   const subCategoryLinks = await page.$$eval('h4.tray__title a', (as) =>
     as.map((a) => a.href)
   )
 
   if (subCategoryLinks.length > 0) {
-    console.log(`${subCategoryLinks.length} category links`)
-
     /* Create sub-categories in the database */
     const categories = subCategoryLinks.map((url) => ({
       url,
@@ -72,7 +67,6 @@ export const getSubCategories = async () => {
         return urlObj.toString()
       })
     )
-    console.log(`${courseLinks.length} course links`)
 
     /* Find the courses from the links */
     const courses = await database.wondriumCourses.findAll({
