@@ -4,7 +4,7 @@ import { DataTypes, Model, Optional } from 'sequelize';
 export interface wondriumCategoriesAttributes {
   id: number;
   url: string;
-  title: string;
+  title?: string;
   parentCategoryId?: number;
   createdAt?: Date;
   updatedAt?: Date;
@@ -13,13 +13,13 @@ export interface wondriumCategoriesAttributes {
 
 export type wondriumCategoriesPk = "id";
 export type wondriumCategoriesId = wondriumCategories[wondriumCategoriesPk];
-export type wondriumCategoriesOptionalAttributes = "id" | "parentCategoryId" | "createdAt" | "updatedAt" | "deletedAt";
+export type wondriumCategoriesOptionalAttributes = "id" | "title" | "parentCategoryId" | "createdAt" | "updatedAt" | "deletedAt";
 export type wondriumCategoriesCreationAttributes = Optional<wondriumCategoriesAttributes, wondriumCategoriesOptionalAttributes>;
 
 export class wondriumCategories extends Model<wondriumCategoriesAttributes, wondriumCategoriesCreationAttributes> implements wondriumCategoriesAttributes {
   id!: number;
   url!: string;
-  title!: string;
+  title?: string;
   parentCategoryId?: number;
   createdAt?: Date;
   updatedAt?: Date;
@@ -40,7 +40,7 @@ export class wondriumCategories extends Model<wondriumCategoriesAttributes, wond
     },
     title: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: true
     },
     parentCategoryId: {
       type: DataTypes.BIGINT,
@@ -77,13 +77,6 @@ export class wondriumCategories extends Model<wondriumCategoriesAttributes, wond
         unique: true,
         fields: [
           { name: "id" },
-        ]
-      },
-      {
-        name: "wondrium_categories_title_key",
-        unique: true,
-        fields: [
-          { name: "title" },
         ]
       },
       {

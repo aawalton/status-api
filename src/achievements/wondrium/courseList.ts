@@ -35,8 +35,19 @@ export const getCourseList = async () => {
   console.log(hrefs.length)
 
   /* Create courses in the database */
-  const courses = hrefs.map((url) => ({ url }))
+  const courses = hrefs
+    .filter((url) => !url.includes('/allsubjects/'))
+    .filter((url) => !url.includes('/collections/'))
+    .map((url) => ({ url }))
   await database.wondriumCourses.bulkCreate(courses, { ignoreDuplicates: true })
+
+  /* Create top-level categories in the database */
+  const subjects = hrefs.filter((url) => url.includes('/allsubjects/'))
+  const collections = hrefs.filter((url) => url.includes('/collections/'))
+  const categories = [...subjects, ...collections].map((url) => ({ url }))
+  await database.wondriumCategories.bulkCreate(categories, {
+    ignoreDuplicates: true,
+  })
 
   /* Return success */
   process.exit(0)
