@@ -123,6 +123,7 @@ export const findOrCreateAchievementsForCourseCategory = async (
     parentAchievementId: categoryAchievement?.id,
     title: achievementTitle,
     link: course.url,
+    target: course.episodes,
   })
   await courseCategory.update({ achievementId: newAchievement.id })
   console.log(new Date(), `created achievement for ${course.title}`)
