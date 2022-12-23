@@ -44,6 +44,7 @@ export const getCourseInfo = async (): Promise<void> => {
     console.log(`skipping ${url}`)
     return getCourseInfo()
   }
+  console.log(title)
 
   /* Find the description */
   const descriptions = await page.$$eval(
