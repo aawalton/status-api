@@ -61,13 +61,13 @@ const findOrCreateAchievementForCategory = async (
   return newAchievement
 }
 
-const createAchievements = async (): Promise<void> => {
+const createAchievementsForCategories = async (): Promise<void> => {
   const category = await database.wondriumCategories.findOne({
     where: { achievementId: { [Op.is]: undefined } },
   })
   if (!category) return process.exit(0)
   await findOrCreateAchievementForCategory(category)
-  return createAchievements()
+  return createAchievementsForCategories()
 }
 
-void createAchievements()
+void createAchievementsForCategories()
