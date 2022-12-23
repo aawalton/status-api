@@ -6,4 +6,5 @@
   },
   "javascript.preferences.importModuleSpecifier": "relative",
   "typescript.preferences.importModuleSpecifier": "relative",
+  "editor.tabSize": 2,
 }

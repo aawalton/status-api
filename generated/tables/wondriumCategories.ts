@@ -10,7 +10,7 @@ export interface wondriumCategoriesAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
   indexedAt?: Date;
-  achievementId?: number;
+  achievementId?: string;
 }
 
 export type wondriumCategoriesPk = "id";
@@ -27,7 +27,7 @@ export class wondriumCategories extends Model<wondriumCategoriesAttributes, wond
   updatedAt?: Date;
   deletedAt?: Date;
   indexedAt?: Date;
-  achievementId?: number;
+  achievementId?: string;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof wondriumCategories {
@@ -75,7 +75,7 @@ export class wondriumCategories extends Model<wondriumCategoriesAttributes, wond
       field: 'indexed_at'
     },
     achievementId: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.UUID,
       allowNull: true,
       field: 'achievement_id'
     }
@@ -87,13 +87,6 @@ export class wondriumCategories extends Model<wondriumCategoriesAttributes, wond
     paranoid: true,
     underscored: true,
     indexes: [
-      {
-        name: "wondrium_categories_achievement_id_idx",
-        unique: true,
-        fields: [
-          { name: "achievement_id" },
-        ]
-      },
       {
         name: "wondrium_categories_pkey",
         unique: true,
