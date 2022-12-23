@@ -22,11 +22,13 @@ export const getSubCategories = async () => {
   page.setDefaultTimeout(timeout)
 
   /* Get the next category */
+  const oneDayAgo = new Date()
+  oneDayAgo.setDate(oneDayAgo.getDate() - 1)
   const category = await database.wondriumCategories.findOne({
-    where: { title: { [Op.is]: undefined } },
+    where: { indexedAt: { [Op.lt]: oneDayAgo } },
   })
   const url = category?.url
-  if (!url) process.exit(0)
+  if (!url) return undefined
 
   /* Load the page */
   console.log(`navigate to ${url}`)
@@ -89,13 +91,13 @@ export const getSubCategories = async () => {
   }
 
   /* Update the parent category with the title */
-  await category.update({ title })
+  await category.update({ title, indexedAt: new Date() })
 
   /* Shut down puppeteer */
   await browser.close()
 
   /* See if there are more to process */
   await getSubCategories()
-}
 
-void getSubCategories()
+  return undefined
+}

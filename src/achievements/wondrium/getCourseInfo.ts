@@ -26,7 +26,7 @@ export const getCourseInfo = async (): Promise<void> => {
     where: { title: { [Op.is]: undefined } },
   })
   const url = course?.url
-  if (!url) process.exit(0)
+  if (!url) return undefined
 
   /* Load the page */
   const promises = []
@@ -69,5 +69,3 @@ export const getCourseInfo = async (): Promise<void> => {
   /* See if there are more to process */
   return getCourseInfo()
 }
-
-void getCourseInfo()

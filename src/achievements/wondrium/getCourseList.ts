@@ -51,9 +51,4 @@ export const getCourseList = async () => {
 
   /* Shut down puppeteer */
   await browser.close()
-
-  /* Return success */
-  process.exit(0)
 }
-
-void getCourseList()
