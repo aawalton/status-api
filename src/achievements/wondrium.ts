@@ -11,7 +11,7 @@
 
 import puppeteer from 'puppeteer'
 
-export const signIntoWondrium = async () => {
+export const getWondriumCourses = async () => {
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
   const timeout = 300000
@@ -32,4 +32,4 @@ export const signIntoWondrium = async () => {
   process.exit(0)
 }
 
-void signIntoWondrium()
+void getWondriumCourses()
