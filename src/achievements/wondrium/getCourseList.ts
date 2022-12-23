@@ -13,7 +13,7 @@ import puppeteer from 'puppeteer'
 
 import database from '../../modules/database'
 
-const wondriumCategoryId = '9ccc4dc2-4dfe-42a6-b6aa-3480a6448e9b'
+const wondriumCategoryId = '86edf9df-2319-4ef8-a042-4e1ce47cb0cc'
 
 export const getCourseList = async () => {
   /* Set up puppeteer */
