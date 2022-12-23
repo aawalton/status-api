@@ -3,6 +3,7 @@ import _ from 'lodash'
 
 import { achievements } from '../../../generated/tables/achievements'
 import { wondriumCategories } from '../../../generated/tables/wondriumCategories'
+import { wondriumCourseCategories } from '../../../generated/tables/wondriumCourseCategories'
 import database from '../../modules/database'
 
 const userId = '17b69a4c-ab2f-4f3e-b8d2-945ba96a4dc6'
@@ -57,5 +58,73 @@ export const findOrCreateAchievementForCategory = async (
   })
   await category.update({ achievementId: newAchievement.id })
   console.log(`created achievement for ${category.title}`)
+  return newAchievement
+}
+
+export const findOrCreateAchievementsForCourseCategory = async (
+  courseCategory: wondriumCourseCategories
+): Promise<achievements | void> => {
+  /* Find the course for the course category */
+  const course = await database.wondriumCourses.findOne({
+    where: { id: courseCategory.courseId },
+  })
+  if (!course)
+    throw new Error(
+      `course not found for ${_.toString(courseCategory.courseId)}`
+    )
+
+  /* If the course category already has an achievement, we're done */
+  if (courseCategory.achievementId) {
+    const achievement = await database.achievements.findOne({
+      where: { id: _.toString(courseCategory.achievementId) },
+    })
+    if (!achievement)
+      throw new Error(
+        `achievement not found for ${_.toString(courseCategory.achievementId)}`
+      )
+    console.log(`found achievement for ${_.toString(course.title)}`)
+    return achievement
+  }
+
+  /* Find the category for the course category */
+  const category = await database.wondriumCategories.findOne({
+    where: { id: courseCategory.categoryId },
+  })
+  if (!category)
+    throw new Error(
+      `category not found for ${_.toString(courseCategory.categoryId)}`
+    )
+
+  /* Make sure the category has an achievement first */
+  const categoryAchievement = await findOrCreateAchievementForCategory(category)
+
+  /* Check if there is an achievement that isn't linked */
+  const achievementTitle = course.title
+  const achievement = categoryAchievement
+    ? await database.achievements.findOne({
+        where: {
+          title: course.title,
+          parentAchievementId: categoryAchievement.id,
+        },
+      })
+    : undefined
+
+  if (achievement) {
+    /* If there is an achievement, link it */
+    await courseCategory.update({ achievementId: achievement.id })
+    console.log(`linked achievement for ${course.title}`)
+    return achievement
+  }
+  /* Otherwise, create one */
+  const newAchievement = await database.achievements.create({
+    userId,
+    categoryName: 'learn',
+    type: 'integer',
+    parentAchievementId: categoryAchievement?.id,
+    title: achievementTitle,
+    link: course.url,
+  })
+  await courseCategory.update({ achievementId: newAchievement.id })
+  console.log(`created achievement for ${course.title}`)
   return newAchievement
 }
