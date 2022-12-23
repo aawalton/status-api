@@ -3,6 +3,8 @@ import { DataTypes, Model, Optional } from 'sequelize';
 import type { achievementPoints, achievementPointsId } from './achievementPoints';
 import type { achievementTypes, achievementTypesId } from './achievementTypes';
 import type { categories, categoriesId } from './categories';
+import type { wondriumCategories, wondriumCategoriesId } from './wondriumCategories';
+import type { wondriumCourseCategories, wondriumCourseCategoriesId } from './wondriumCourseCategories';
 
 export interface achievementsAttributes {
   id: string;
@@ -73,6 +75,30 @@ export class achievements extends Model<achievementsAttributes, achievementsCrea
   getParentAchievement!: Sequelize.BelongsToGetAssociationMixin<achievements>;
   setParentAchievement!: Sequelize.BelongsToSetAssociationMixin<achievements, achievementsId>;
   createParentAchievement!: Sequelize.BelongsToCreateAssociationMixin<achievements>;
+  // achievements hasMany wondriumCategories via achievementId
+  wondriumCategories!: wondriumCategories[];
+  getWondriumCategories!: Sequelize.HasManyGetAssociationsMixin<wondriumCategories>;
+  setWondriumCategories!: Sequelize.HasManySetAssociationsMixin<wondriumCategories, wondriumCategoriesId>;
+  addWondriumCategory!: Sequelize.HasManyAddAssociationMixin<wondriumCategories, wondriumCategoriesId>;
+  addWondriumCategories!: Sequelize.HasManyAddAssociationsMixin<wondriumCategories, wondriumCategoriesId>;
+  createWondriumCategory!: Sequelize.HasManyCreateAssociationMixin<wondriumCategories>;
+  removeWondriumCategory!: Sequelize.HasManyRemoveAssociationMixin<wondriumCategories, wondriumCategoriesId>;
+  removeWondriumCategories!: Sequelize.HasManyRemoveAssociationsMixin<wondriumCategories, wondriumCategoriesId>;
+  hasWondriumCategory!: Sequelize.HasManyHasAssociationMixin<wondriumCategories, wondriumCategoriesId>;
+  hasWondriumCategories!: Sequelize.HasManyHasAssociationsMixin<wondriumCategories, wondriumCategoriesId>;
+  countWondriumCategories!: Sequelize.HasManyCountAssociationsMixin;
+  // achievements hasMany wondriumCourseCategories via achievementId
+  wondriumCourseCategories!: wondriumCourseCategories[];
+  getWondriumCourseCategories!: Sequelize.HasManyGetAssociationsMixin<wondriumCourseCategories>;
+  setWondriumCourseCategories!: Sequelize.HasManySetAssociationsMixin<wondriumCourseCategories, wondriumCourseCategoriesId>;
+  addWondriumCourseCategory!: Sequelize.HasManyAddAssociationMixin<wondriumCourseCategories, wondriumCourseCategoriesId>;
+  addWondriumCourseCategories!: Sequelize.HasManyAddAssociationsMixin<wondriumCourseCategories, wondriumCourseCategoriesId>;
+  createWondriumCourseCategory!: Sequelize.HasManyCreateAssociationMixin<wondriumCourseCategories>;
+  removeWondriumCourseCategory!: Sequelize.HasManyRemoveAssociationMixin<wondriumCourseCategories, wondriumCourseCategoriesId>;
+  removeWondriumCourseCategories!: Sequelize.HasManyRemoveAssociationsMixin<wondriumCourseCategories, wondriumCourseCategoriesId>;
+  hasWondriumCourseCategory!: Sequelize.HasManyHasAssociationMixin<wondriumCourseCategories, wondriumCourseCategoriesId>;
+  hasWondriumCourseCategories!: Sequelize.HasManyHasAssociationsMixin<wondriumCourseCategories, wondriumCourseCategoriesId>;
+  countWondriumCourseCategories!: Sequelize.HasManyCountAssociationsMixin;
   // achievements belongsTo categories via categoryName
   categoryNameCategory!: categories;
   getCategoryNameCategory!: Sequelize.BelongsToGetAssociationMixin<categories>;

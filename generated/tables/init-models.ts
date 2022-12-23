@@ -19,10 +19,16 @@ import { profiles as _profiles } from "./profiles";
 import type { profilesAttributes, profilesCreationAttributes } from "./profiles";
 import { wondriumCategories as _wondriumCategories } from "./wondriumCategories";
 import type { wondriumCategoriesAttributes, wondriumCategoriesCreationAttributes } from "./wondriumCategories";
+import { wondriumCategoriesOld as _wondriumCategoriesOld } from "./wondriumCategoriesOld";
+import type { wondriumCategoriesOldAttributes, wondriumCategoriesOldCreationAttributes } from "./wondriumCategoriesOld";
 import { wondriumCourseCategories as _wondriumCourseCategories } from "./wondriumCourseCategories";
 import type { wondriumCourseCategoriesAttributes, wondriumCourseCategoriesCreationAttributes } from "./wondriumCourseCategories";
+import { wondriumCourseCategoriesOld as _wondriumCourseCategoriesOld } from "./wondriumCourseCategoriesOld";
+import type { wondriumCourseCategoriesOldAttributes, wondriumCourseCategoriesOldCreationAttributes } from "./wondriumCourseCategoriesOld";
 import { wondriumCourses as _wondriumCourses } from "./wondriumCourses";
 import type { wondriumCoursesAttributes, wondriumCoursesCreationAttributes } from "./wondriumCourses";
+import { wondriumCoursesOld as _wondriumCoursesOld } from "./wondriumCoursesOld";
+import type { wondriumCoursesOldAttributes, wondriumCoursesOldCreationAttributes } from "./wondriumCoursesOld";
 
 export {
   _achievementColors as achievementColors,
@@ -35,8 +41,11 @@ export {
   _esoZones as esoZones,
   _profiles as profiles,
   _wondriumCategories as wondriumCategories,
+  _wondriumCategoriesOld as wondriumCategoriesOld,
   _wondriumCourseCategories as wondriumCourseCategories,
+  _wondriumCourseCategoriesOld as wondriumCourseCategoriesOld,
   _wondriumCourses as wondriumCourses,
+  _wondriumCoursesOld as wondriumCoursesOld,
 };
 
 export type {
@@ -60,10 +69,16 @@ export type {
   profilesCreationAttributes,
   wondriumCategoriesAttributes,
   wondriumCategoriesCreationAttributes,
+  wondriumCategoriesOldAttributes,
+  wondriumCategoriesOldCreationAttributes,
   wondriumCourseCategoriesAttributes,
   wondriumCourseCategoriesCreationAttributes,
+  wondriumCourseCategoriesOldAttributes,
+  wondriumCourseCategoriesOldCreationAttributes,
   wondriumCoursesAttributes,
   wondriumCoursesCreationAttributes,
+  wondriumCoursesOldAttributes,
+  wondriumCoursesOldCreationAttributes,
 };
 
 export function initModels(sequelize: Sequelize) {
@@ -77,8 +92,11 @@ export function initModels(sequelize: Sequelize) {
   const esoZones = _esoZones.initModel(sequelize);
   const profiles = _profiles.initModel(sequelize);
   const wondriumCategories = _wondriumCategories.initModel(sequelize);
+  const wondriumCategoriesOld = _wondriumCategoriesOld.initModel(sequelize);
   const wondriumCourseCategories = _wondriumCourseCategories.initModel(sequelize);
+  const wondriumCourseCategoriesOld = _wondriumCourseCategoriesOld.initModel(sequelize);
   const wondriumCourses = _wondriumCourses.initModel(sequelize);
+  const wondriumCoursesOld = _wondriumCoursesOld.initModel(sequelize);
 
   categories.belongsTo(achievementColors, { foreignKey: "color"});
   achievementColors.hasMany(categories, { foreignKey: "color"});
@@ -88,6 +106,10 @@ export function initModels(sequelize: Sequelize) {
   achievementTypes.hasMany(achievements, { foreignKey: "type"});
   achievements.belongsTo(achievements, { foreignKey: "parentAchievementId"});
   achievements.hasMany(achievements, { foreignKey: "parentAchievementId"});
+  wondriumCategories.belongsTo(achievements, { foreignKey: "achievementId"});
+  achievements.hasMany(wondriumCategories, { foreignKey: "achievementId"});
+  wondriumCourseCategories.belongsTo(achievements, { foreignKey: "achievementId"});
+  achievements.hasMany(wondriumCourseCategories, { foreignKey: "achievementId"});
   achievements.belongsTo(categories, { foreignKey: "categoryName"});
   categories.hasMany(achievements, { foreignKey: "categoryName"});
 
@@ -102,7 +124,10 @@ export function initModels(sequelize: Sequelize) {
     esoZones: esoZones,
     profiles: profiles,
     wondriumCategories: wondriumCategories,
+    wondriumCategoriesOld: wondriumCategoriesOld,
     wondriumCourseCategories: wondriumCourseCategories,
+    wondriumCourseCategoriesOld: wondriumCourseCategoriesOld,
     wondriumCourses: wondriumCourses,
+    wondriumCoursesOld: wondriumCoursesOld,
   };
 }

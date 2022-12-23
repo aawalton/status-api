@@ -1,41 +1,43 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 
-export interface wondriumCoursesAttributes {
-  id: string;
+export interface wondriumCoursesOldAttributes {
+  id: number;
   url: string;
   title?: string;
   description?: string;
   episodes?: number;
-  indexedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
+  indexedAt?: Date;
+  idUuid?: string;
 }
 
-export type wondriumCoursesPk = "id";
-export type wondriumCoursesId = wondriumCourses[wondriumCoursesPk];
-export type wondriumCoursesOptionalAttributes = "id" | "title" | "description" | "episodes" | "indexedAt" | "createdAt" | "updatedAt" | "deletedAt";
-export type wondriumCoursesCreationAttributes = Optional<wondriumCoursesAttributes, wondriumCoursesOptionalAttributes>;
+export type wondriumCoursesOldPk = "id";
+export type wondriumCoursesOldId = wondriumCoursesOld[wondriumCoursesOldPk];
+export type wondriumCoursesOldOptionalAttributes = "id" | "title" | "description" | "episodes" | "createdAt" | "updatedAt" | "deletedAt" | "indexedAt" | "idUuid";
+export type wondriumCoursesOldCreationAttributes = Optional<wondriumCoursesOldAttributes, wondriumCoursesOldOptionalAttributes>;
 
-export class wondriumCourses extends Model<wondriumCoursesAttributes, wondriumCoursesCreationAttributes> implements wondriumCoursesAttributes {
-  id!: string;
+export class wondriumCoursesOld extends Model<wondriumCoursesOldAttributes, wondriumCoursesOldCreationAttributes> implements wondriumCoursesOldAttributes {
+  id!: number;
   url!: string;
   title?: string;
   description?: string;
   episodes?: number;
-  indexedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
+  indexedAt?: Date;
+  idUuid?: string;
 
 
-  static initModel(sequelize: Sequelize.Sequelize): typeof wondriumCourses {
-    return wondriumCourses.init({
+  static initModel(sequelize: Sequelize.Sequelize): typeof wondriumCoursesOld {
+    return wondriumCoursesOld.init({
     id: {
-      type: DataTypes.UUID,
+      autoIncrement: true,
+      type: DataTypes.BIGINT,
       allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     url: {
@@ -54,12 +56,6 @@ export class wondriumCourses extends Model<wondriumCoursesAttributes, wondriumCo
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    indexedAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      defaultValue: Sequelize.Sequelize.fn('now'),
-      field: 'indexed_at'
-    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: true,
@@ -76,24 +72,43 @@ export class wondriumCourses extends Model<wondriumCoursesAttributes, wondriumCo
       type: DataTypes.DATE,
       allowNull: true,
       field: 'deleted_at'
+    },
+    indexedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'indexed_at'
+    },
+    idUuid: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      defaultValue: DataTypes.UUIDV4,
+      field: 'id_uuid'
     }
   }, {
     sequelize,
-    tableName: 'wondrium_courses',
+    tableName: 'wondrium_courses_old',
     schema: 'public',
     timestamps: false,
     paranoid: true,
     underscored: true,
     indexes: [
       {
-        name: "wondrium_courses_pkey1",
+        name: "wondrium_courses_id_uuid_idx",
+        unique: true,
+        fields: [
+          { name: "id_uuid" },
+        ]
+      },
+      {
+        name: "wondrium_courses_pkey",
         unique: true,
         fields: [
           { name: "id" },
         ]
       },
       {
-        name: "wondrium_courses_url_key1",
+        name: "wondrium_courses_url_key",
         unique: true,
         fields: [
           { name: "url" },

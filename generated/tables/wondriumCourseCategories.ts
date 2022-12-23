@@ -1,48 +1,71 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { achievements, achievementsId } from './achievements';
 
 export interface wondriumCourseCategoriesAttributes {
-  id: number;
-  courseId: number;
-  categoryId: number;
+  id: string;
+  courseId: string;
+  categoryId: string;
+  achievementId?: string;
+  indexedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
-  achievementId?: string;
 }
 
 export type wondriumCourseCategoriesPk = "id";
 export type wondriumCourseCategoriesId = wondriumCourseCategories[wondriumCourseCategoriesPk];
-export type wondriumCourseCategoriesOptionalAttributes = "id" | "createdAt" | "updatedAt" | "deletedAt" | "achievementId";
+export type wondriumCourseCategoriesOptionalAttributes = "id" | "achievementId" | "indexedAt" | "createdAt" | "updatedAt" | "deletedAt";
 export type wondriumCourseCategoriesCreationAttributes = Optional<wondriumCourseCategoriesAttributes, wondriumCourseCategoriesOptionalAttributes>;
 
 export class wondriumCourseCategories extends Model<wondriumCourseCategoriesAttributes, wondriumCourseCategoriesCreationAttributes> implements wondriumCourseCategoriesAttributes {
-  id!: number;
-  courseId!: number;
-  categoryId!: number;
+  id!: string;
+  courseId!: string;
+  categoryId!: string;
+  achievementId?: string;
+  indexedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
-  achievementId?: string;
 
+  // wondriumCourseCategories belongsTo achievements via achievementId
+  achievement!: achievements;
+  getAchievement!: Sequelize.BelongsToGetAssociationMixin<achievements>;
+  setAchievement!: Sequelize.BelongsToSetAssociationMixin<achievements, achievementsId>;
+  createAchievement!: Sequelize.BelongsToCreateAssociationMixin<achievements>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof wondriumCourseCategories {
     return wondriumCourseCategories.init({
     id: {
-      autoIncrement: true,
-      type: DataTypes.BIGINT,
+      type: DataTypes.UUID,
       allowNull: false,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     courseId: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.UUID,
       allowNull: false,
       field: 'course_id'
     },
     categoryId: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.UUID,
       allowNull: false,
       field: 'category_id'
+    },
+    achievementId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: {
+        model: 'achievements',
+        key: 'id'
+      },
+      field: 'achievement_id'
+    },
+    indexedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'indexed_at'
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -60,11 +83,6 @@ export class wondriumCourseCategories extends Model<wondriumCourseCategoriesAttr
       type: DataTypes.DATE,
       allowNull: true,
       field: 'deleted_at'
-    },
-    achievementId: {
-      type: DataTypes.UUID,
-      allowNull: true,
-      field: 'achievement_id'
     }
   }, {
     sequelize,
@@ -75,7 +93,7 @@ export class wondriumCourseCategories extends Model<wondriumCourseCategoriesAttr
     underscored: true,
     indexes: [
       {
-        name: "wondrium_course_categories_course_id_category_id_idx",
+        name: "wondrium_course_categories_course_id_category_id_key",
         unique: true,
         fields: [
           { name: "course_id" },
@@ -83,7 +101,7 @@ export class wondriumCourseCategories extends Model<wondriumCourseCategoriesAttr
         ]
       },
       {
-        name: "wondrium_course_categories_pkey",
+        name: "wondrium_course_categories_pkey1",
         unique: true,
         fields: [
           { name: "id" },
