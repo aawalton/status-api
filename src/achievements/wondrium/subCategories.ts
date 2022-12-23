@@ -91,6 +91,9 @@ export const getSubCategories = async () => {
   /* Update the parent category with the title */
   await category.update({ title })
 
+  /* Shut down puppeteer */
+  await browser.close()
+
   /* See if there are more to process */
   await getSubCategories()
 }
