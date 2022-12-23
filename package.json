@@ -12,6 +12,7 @@
     "fix": "yarn eslint --fix",
     "lint": "yarn eslint",
     "eslint": "eslint --max-warnings=0 --ext .js,.ts,.jsx,.tsx .",
+    "schema:refresh": "yarn node src/scripts/auto.js",
     "shake": "./node_modules/.bin/ts-unused-exports ./tsconfig.json --excludePathsFromReport=\"\"",
     "prepare": "husky install"
   },

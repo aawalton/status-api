@@ -9,11 +9,13 @@ export interface wondriumCategoriesAttributes {
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
+  indexedAt?: Date;
+  achievementId?: number;
 }
 
 export type wondriumCategoriesPk = "id";
 export type wondriumCategoriesId = wondriumCategories[wondriumCategoriesPk];
-export type wondriumCategoriesOptionalAttributes = "id" | "title" | "parentCategoryId" | "createdAt" | "updatedAt" | "deletedAt";
+export type wondriumCategoriesOptionalAttributes = "id" | "title" | "parentCategoryId" | "createdAt" | "updatedAt" | "deletedAt" | "indexedAt" | "achievementId";
 export type wondriumCategoriesCreationAttributes = Optional<wondriumCategoriesAttributes, wondriumCategoriesOptionalAttributes>;
 
 export class wondriumCategories extends Model<wondriumCategoriesAttributes, wondriumCategoriesCreationAttributes> implements wondriumCategoriesAttributes {
@@ -24,6 +26,8 @@ export class wondriumCategories extends Model<wondriumCategoriesAttributes, wond
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
+  indexedAt?: Date;
+  achievementId?: number;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof wondriumCategories {
@@ -63,6 +67,17 @@ export class wondriumCategories extends Model<wondriumCategoriesAttributes, wond
       type: DataTypes.DATE,
       allowNull: true,
       field: 'deleted_at'
+    },
+    indexedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'indexed_at'
+    },
+    achievementId: {
+      type: DataTypes.BIGINT,
+      allowNull: true,
+      field: 'achievement_id'
     }
   }, {
     sequelize,
@@ -72,6 +87,13 @@ export class wondriumCategories extends Model<wondriumCategoriesAttributes, wond
     paranoid: true,
     underscored: true,
     indexes: [
+      {
+        name: "wondrium_categories_achievement_id_idx",
+        unique: true,
+        fields: [
+          { name: "achievement_id" },
+        ]
+      },
       {
         name: "wondrium_categories_pkey",
         unique: true,

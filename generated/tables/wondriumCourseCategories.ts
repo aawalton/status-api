@@ -68,6 +68,14 @@ export class wondriumCourseCategories extends Model<wondriumCourseCategoriesAttr
     underscored: true,
     indexes: [
       {
+        name: "wondrium_course_categories_course_id_category_id_idx",
+        unique: true,
+        fields: [
+          { name: "course_id" },
+          { name: "category_id" },
+        ]
+      },
+      {
         name: "wondrium_course_categories_pkey",
         unique: true,
         fields: [

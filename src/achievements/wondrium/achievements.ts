@@ -1,0 +1,3 @@
+const createAchievements = () => {}
+
+createAchievements()

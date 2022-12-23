@@ -10,11 +10,13 @@ export interface wondriumCoursesAttributes {
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
+  indexedAt?: Date;
+  achievementId?: number;
 }
 
 export type wondriumCoursesPk = "id";
 export type wondriumCoursesId = wondriumCourses[wondriumCoursesPk];
-export type wondriumCoursesOptionalAttributes = "id" | "title" | "description" | "episodes" | "createdAt" | "updatedAt" | "deletedAt";
+export type wondriumCoursesOptionalAttributes = "id" | "title" | "description" | "episodes" | "createdAt" | "updatedAt" | "deletedAt" | "indexedAt" | "achievementId";
 export type wondriumCoursesCreationAttributes = Optional<wondriumCoursesAttributes, wondriumCoursesOptionalAttributes>;
 
 export class wondriumCourses extends Model<wondriumCoursesAttributes, wondriumCoursesCreationAttributes> implements wondriumCoursesAttributes {
@@ -26,6 +28,8 @@ export class wondriumCourses extends Model<wondriumCoursesAttributes, wondriumCo
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
+  indexedAt?: Date;
+  achievementId?: number;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof wondriumCourses {
@@ -68,6 +72,17 @@ export class wondriumCourses extends Model<wondriumCoursesAttributes, wondriumCo
       type: DataTypes.DATE,
       allowNull: true,
       field: 'deleted_at'
+    },
+    indexedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.fn('now'),
+      field: 'indexed_at'
+    },
+    achievementId: {
+      type: DataTypes.BIGINT,
+      allowNull: true,
+      field: 'achievement_id'
     }
   }, {
     sequelize,
@@ -77,6 +92,13 @@ export class wondriumCourses extends Model<wondriumCoursesAttributes, wondriumCo
     paranoid: true,
     underscored: true,
     indexes: [
+      {
+        name: "wondrium_courses_achievement_id_idx",
+        unique: true,
+        fields: [
+          { name: "achievement_id" },
+        ]
+      },
       {
         name: "wondrium_courses_pkey",
         unique: true,

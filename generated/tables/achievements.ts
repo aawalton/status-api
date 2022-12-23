@@ -214,6 +214,14 @@ export class achievements extends Model<achievementsAttributes, achievementsCrea
     underscored: true,
     indexes: [
       {
+        name: "achievements_parent_achievement_id_title_idx",
+        unique: true,
+        fields: [
+          { name: "parent_achievement_id" },
+          { name: "title" },
+        ]
+      },
+      {
         name: "achievements_pkey1",
         unique: true,
         fields: [
