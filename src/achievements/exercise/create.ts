@@ -1,12 +1,6 @@
 import database from '../../modules/database'
 import { findOrCreateAchievementByTitle } from '../helpers'
 
-const sharedAttributes = {
-  categoryName: 'health',
-  formatName: 'automatic',
-  circleName: 'solo',
-}
-
 const levels = [10, 100, 1000, 10000, 100000, 1000000]
 
 export const createExerciseAchievements = async () => {
@@ -14,7 +8,9 @@ export const createExerciseAchievements = async () => {
   const parentAchievement = await findOrCreateAchievementByTitle({
     title: 'Exercise',
     type: 'collection',
-    ...sharedAttributes,
+    categoryName: 'health',
+    formatName: 'focused',
+    circleName: 'solo',
   })
 
   /* Find or create achievements for categories */
@@ -24,8 +20,10 @@ export const createExerciseAchievements = async () => {
       findOrCreateAchievementByTitle({
         title: `${exercise.preText} ${exercise.postText}`,
         type: 'sequence',
+        categoryName: 'health',
         parentAchievementId: parentAchievement.id,
-        ...sharedAttributes,
+        formatName: exercise.formatName,
+        circleName: exercise.circleName,
       })
     )
   )
@@ -47,7 +45,9 @@ export const createExerciseAchievements = async () => {
             target: level,
             level,
             parentAchievementId: categoryAchievement.id,
-            ...sharedAttributes,
+            categoryName: 'health',
+            formatName: exercise.formatName,
+            circleName: exercise.circleName,
           })
         )
       )

@@ -8,11 +8,13 @@ export interface exercisesAttributes {
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
+  formatName: string;
+  circleName: string;
 }
 
 export type exercisesPk = "id";
 export type exercisesId = exercises[exercisesPk];
-export type exercisesOptionalAttributes = "id" | "createdAt" | "updatedAt" | "deletedAt";
+export type exercisesOptionalAttributes = "id" | "createdAt" | "updatedAt" | "deletedAt" | "formatName" | "circleName";
 export type exercisesCreationAttributes = Optional<exercisesAttributes, exercisesOptionalAttributes>;
 
 export class exercises extends Model<exercisesAttributes, exercisesCreationAttributes> implements exercisesAttributes {
@@ -22,6 +24,8 @@ export class exercises extends Model<exercisesAttributes, exercisesCreationAttri
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
+  formatName!: string;
+  circleName!: string;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof exercises {
@@ -58,6 +62,18 @@ export class exercises extends Model<exercisesAttributes, exercisesCreationAttri
       type: DataTypes.DATE,
       allowNull: true,
       field: 'deleted_at'
+    },
+    formatName: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      defaultValue: "focused",
+      field: 'format_name'
+    },
+    circleName: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      defaultValue: "solo",
+      field: 'circle_name'
     }
   }, {
     sequelize,
