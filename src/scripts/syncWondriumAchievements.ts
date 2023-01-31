@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
-import { createAchievementsForCategories } from './createAchievementsForCategories'
-import { createAchievementsForCourseCategories } from './createAchievementsForCourseCategories'
-import { getCourseInfo } from './getCourseInfo'
-import { getCourseList } from './getCourseList'
-import { getSubCategories } from './getSubCategories'
+import { createAchievementsForCategories } from '../achievements/wondrium/createAchievementsForCategories'
+import { createAchievementsForCourseCategories } from '../achievements/wondrium/createAchievementsForCourseCategories'
+import { getCourseInfo } from '../achievements/wondrium/getCourseInfo'
+import { getCourseList } from '../achievements/wondrium/getCourseList'
+import { getSubCategories } from '../achievements/wondrium/getSubCategories'
 
 const syncAll = async () => {
   /* Sync the full list of courses and categories */
