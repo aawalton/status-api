@@ -1,4 +1,3 @@
-import { exercises as ExerciseType } from '../../../generated/tables/exercises'
 import database from '../../modules/database'
 import { findOrCreateAchievementByTitle } from '../helpers'
 
@@ -21,7 +20,7 @@ export const createExerciseAchievements = async () => {
   /* Find or create achievements for categories */
   const exercises = await database.exercises.findAll()
   await Promise.all(
-    exercises.map((exercise: ExerciseType) =>
+    exercises.map((exercise) =>
       findOrCreateAchievementByTitle({
         title: `${exercise.preText} ${exercise.postText}`,
         type: 'sequence',
