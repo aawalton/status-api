@@ -6,7 +6,7 @@ import type { achievementTypes, achievementTypesId } from './achievementTypes';
 
 export interface achievementsAttributes {
   id: string;
-  userId: string;
+  userId?: string;
   type: string;
   isCollection?: boolean;
   parentAchievementId?: string;
@@ -38,7 +38,7 @@ export type achievementsCreationAttributes = Optional<achievementsAttributes, ac
 
 export class achievements extends Model<achievementsAttributes, achievementsCreationAttributes> implements achievementsAttributes {
   id!: string;
-  userId!: string;
+  userId?: string;
   type!: string;
   isCollection?: boolean;
   parentAchievementId?: string;
@@ -93,7 +93,7 @@ export class achievements extends Model<achievementsAttributes, achievementsCrea
     },
     userId: {
       type: DataTypes.UUID,
-      allowNull: false,
+      allowNull: true,
       defaultValue: "17b69a4c-ab2f-4f3e-b8d2-945ba96a4dc6",
       field: 'user_id'
     },
