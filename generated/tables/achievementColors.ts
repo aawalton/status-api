@@ -1,6 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { categories, categoriesId } from './categories';
+import type { achievementCategories, achievementCategoriesId } from './achievementCategories';
 
 export interface achievementColorsAttributes {
   id: string;
@@ -22,18 +22,18 @@ export class achievementColors extends Model<achievementColorsAttributes, achiev
   updatedAt!: Date;
   deletedAt?: Date;
 
-  // achievementColors hasMany categories via color
-  categories!: categories[];
-  getCategories!: Sequelize.HasManyGetAssociationsMixin<categories>;
-  setCategories!: Sequelize.HasManySetAssociationsMixin<categories, categoriesId>;
-  addCategory!: Sequelize.HasManyAddAssociationMixin<categories, categoriesId>;
-  addCategories!: Sequelize.HasManyAddAssociationsMixin<categories, categoriesId>;
-  createCategory!: Sequelize.HasManyCreateAssociationMixin<categories>;
-  removeCategory!: Sequelize.HasManyRemoveAssociationMixin<categories, categoriesId>;
-  removeCategories!: Sequelize.HasManyRemoveAssociationsMixin<categories, categoriesId>;
-  hasCategory!: Sequelize.HasManyHasAssociationMixin<categories, categoriesId>;
-  hasCategories!: Sequelize.HasManyHasAssociationsMixin<categories, categoriesId>;
-  countCategories!: Sequelize.HasManyCountAssociationsMixin;
+  // achievementColors hasMany achievementCategories via color
+  achievementCategories!: achievementCategories[];
+  getAchievementCategories!: Sequelize.HasManyGetAssociationsMixin<achievementCategories>;
+  setAchievementCategories!: Sequelize.HasManySetAssociationsMixin<achievementCategories, achievementCategoriesId>;
+  addAchievementCategory!: Sequelize.HasManyAddAssociationMixin<achievementCategories, achievementCategoriesId>;
+  addAchievementCategories!: Sequelize.HasManyAddAssociationsMixin<achievementCategories, achievementCategoriesId>;
+  createAchievementCategory!: Sequelize.HasManyCreateAssociationMixin<achievementCategories>;
+  removeAchievementCategory!: Sequelize.HasManyRemoveAssociationMixin<achievementCategories, achievementCategoriesId>;
+  removeAchievementCategories!: Sequelize.HasManyRemoveAssociationsMixin<achievementCategories, achievementCategoriesId>;
+  hasAchievementCategory!: Sequelize.HasManyHasAssociationMixin<achievementCategories, achievementCategoriesId>;
+  hasAchievementCategories!: Sequelize.HasManyHasAssociationsMixin<achievementCategories, achievementCategoriesId>;
+  countAchievementCategories!: Sequelize.HasManyCountAssociationsMixin;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof achievementColors {
     return achievementColors.init({

@@ -1,8 +1,8 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { achievementCategories, achievementCategoriesId } from './achievementCategories';
 import type { achievementPoints, achievementPointsId } from './achievementPoints';
 import type { achievementTypes, achievementTypesId } from './achievementTypes';
-import type { categories, categoriesId } from './categories';
 
 export interface achievementsAttributes {
   id: string;
@@ -27,11 +27,13 @@ export interface achievementsAttributes {
   percentComplete?: number;
   importedAt?: Date;
   context?: string;
+  formatName?: string;
+  circleName: string;
 }
 
 export type achievementsPk = "id";
 export type achievementsId = achievements[achievementsPk];
-export type achievementsOptionalAttributes = "id" | "type" | "isCollection" | "parentAchievementId" | "level" | "title" | "description" | "link" | "points" | "target" | "progress" | "progressAt" | "completedAt" | "createdAt" | "updatedAt" | "deletedAt" | "completed" | "percentComplete" | "importedAt" | "context";
+export type achievementsOptionalAttributes = "id" | "userId" | "type" | "isCollection" | "parentAchievementId" | "level" | "title" | "description" | "link" | "points" | "target" | "progress" | "progressAt" | "completedAt" | "createdAt" | "updatedAt" | "deletedAt" | "completed" | "percentComplete" | "importedAt" | "context" | "formatName" | "circleName";
 export type achievementsCreationAttributes = Optional<achievementsAttributes, achievementsOptionalAttributes>;
 
 export class achievements extends Model<achievementsAttributes, achievementsCreationAttributes> implements achievementsAttributes {
@@ -57,7 +59,14 @@ export class achievements extends Model<achievementsAttributes, achievementsCrea
   percentComplete?: number;
   importedAt?: Date;
   context?: string;
+  formatName?: string;
+  circleName!: string;
 
+  // achievements belongsTo achievementCategories via categoryName
+  categoryNameAchievementCategory!: achievementCategories;
+  getCategoryNameAchievementCategory!: Sequelize.BelongsToGetAssociationMixin<achievementCategories>;
+  setCategoryNameAchievementCategory!: Sequelize.BelongsToSetAssociationMixin<achievementCategories, achievementCategoriesId>;
+  createCategoryNameAchievementCategory!: Sequelize.BelongsToCreateAssociationMixin<achievementCategories>;
   // achievements belongsTo achievementPoints via points
   pointsAchievementPoint!: achievementPoints;
   getPointsAchievementPoint!: Sequelize.BelongsToGetAssociationMixin<achievementPoints>;
@@ -73,11 +82,6 @@ export class achievements extends Model<achievementsAttributes, achievementsCrea
   getParentAchievement!: Sequelize.BelongsToGetAssociationMixin<achievements>;
   setParentAchievement!: Sequelize.BelongsToSetAssociationMixin<achievements, achievementsId>;
   createParentAchievement!: Sequelize.BelongsToCreateAssociationMixin<achievements>;
-  // achievements belongsTo categories via categoryName
-  categoryNameCategory!: categories;
-  getCategoryNameCategory!: Sequelize.BelongsToGetAssociationMixin<categories>;
-  setCategoryNameCategory!: Sequelize.BelongsToSetAssociationMixin<categories, categoriesId>;
-  createCategoryNameCategory!: Sequelize.BelongsToCreateAssociationMixin<categories>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof achievements {
     return achievements.init({
@@ -90,6 +94,7 @@ export class achievements extends Model<achievementsAttributes, achievementsCrea
     userId: {
       type: DataTypes.UUID,
       allowNull: false,
+      defaultValue: "17b69a4c-ab2f-4f3e-b8d2-945ba96a4dc6",
       field: 'user_id'
     },
     type: {
@@ -123,7 +128,7 @@ export class achievements extends Model<achievementsAttributes, achievementsCrea
       type: DataTypes.TEXT,
       allowNull: false,
       references: {
-        model: 'categories',
+        model: 'achievement_categories',
         key: 'name'
       },
       field: 'category_name'
@@ -162,6 +167,7 @@ export class achievements extends Model<achievementsAttributes, achievementsCrea
     progressAt: {
       type: DataTypes.DATE,
       allowNull: true,
+      defaultValue: Sequelize.Sequelize.fn('now'),
       field: 'progress_at'
     },
     completedAt: {
@@ -203,6 +209,18 @@ export class achievements extends Model<achievementsAttributes, achievementsCrea
     context: {
       type: DataTypes.TEXT,
       allowNull: true
+    },
+    formatName: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      defaultValue: "focused",
+      field: 'format_name'
+    },
+    circleName: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      defaultValue: "solo",
+      field: 'circle_name'
     }
   }, {
     sequelize,

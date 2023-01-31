@@ -3,7 +3,7 @@ import { DataTypes, Model, Optional } from 'sequelize';
 import type { achievementColors, achievementColorsId } from './achievementColors';
 import type { achievements, achievementsId } from './achievements';
 
-export interface categoriesAttributes {
+export interface achievementCategoriesAttributes {
   id: string;
   name: string;
   color: string;
@@ -12,12 +12,12 @@ export interface categoriesAttributes {
   deletedAt?: Date;
 }
 
-export type categoriesPk = "id";
-export type categoriesId = categories[categoriesPk];
-export type categoriesOptionalAttributes = "id" | "color" | "createdAt" | "updatedAt" | "deletedAt";
-export type categoriesCreationAttributes = Optional<categoriesAttributes, categoriesOptionalAttributes>;
+export type achievementCategoriesPk = "id";
+export type achievementCategoriesId = achievementCategories[achievementCategoriesPk];
+export type achievementCategoriesOptionalAttributes = "id" | "color" | "createdAt" | "updatedAt" | "deletedAt";
+export type achievementCategoriesCreationAttributes = Optional<achievementCategoriesAttributes, achievementCategoriesOptionalAttributes>;
 
-export class categories extends Model<categoriesAttributes, categoriesCreationAttributes> implements categoriesAttributes {
+export class achievementCategories extends Model<achievementCategoriesAttributes, achievementCategoriesCreationAttributes> implements achievementCategoriesAttributes {
   id!: string;
   name!: string;
   color!: string;
@@ -25,12 +25,7 @@ export class categories extends Model<categoriesAttributes, categoriesCreationAt
   updatedAt!: Date;
   deletedAt?: Date;
 
-  // categories belongsTo achievementColors via color
-  colorAchievementColor!: achievementColors;
-  getColorAchievementColor!: Sequelize.BelongsToGetAssociationMixin<achievementColors>;
-  setColorAchievementColor!: Sequelize.BelongsToSetAssociationMixin<achievementColors, achievementColorsId>;
-  createColorAchievementColor!: Sequelize.BelongsToCreateAssociationMixin<achievementColors>;
-  // categories hasMany achievements via categoryName
+  // achievementCategories hasMany achievements via categoryName
   achievements!: achievements[];
   getAchievements!: Sequelize.HasManyGetAssociationsMixin<achievements>;
   setAchievements!: Sequelize.HasManySetAssociationsMixin<achievements, achievementsId>;
@@ -42,9 +37,14 @@ export class categories extends Model<categoriesAttributes, categoriesCreationAt
   hasAchievement!: Sequelize.HasManyHasAssociationMixin<achievements, achievementsId>;
   hasAchievements!: Sequelize.HasManyHasAssociationsMixin<achievements, achievementsId>;
   countAchievements!: Sequelize.HasManyCountAssociationsMixin;
+  // achievementCategories belongsTo achievementColors via color
+  colorAchievementColor!: achievementColors;
+  getColorAchievementColor!: Sequelize.BelongsToGetAssociationMixin<achievementColors>;
+  setColorAchievementColor!: Sequelize.BelongsToSetAssociationMixin<achievementColors, achievementColorsId>;
+  createColorAchievementColor!: Sequelize.BelongsToCreateAssociationMixin<achievementColors>;
 
-  static initModel(sequelize: Sequelize.Sequelize): typeof categories {
-    return categories.init({
+  static initModel(sequelize: Sequelize.Sequelize): typeof achievementCategories {
+    return achievementCategories.init({
     id: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -84,7 +84,7 @@ export class categories extends Model<categoriesAttributes, categoriesCreationAt
     }
   }, {
     sequelize,
-    tableName: 'categories',
+    tableName: 'achievement_categories',
     schema: 'public',
     timestamps: false,
     paranoid: true,
