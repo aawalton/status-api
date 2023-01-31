@@ -1,7 +1,7 @@
 import { Op } from 'sequelize'
 
-import database from '../../modules/database'
 import { findOrCreateAchievementsForCourseCategory } from './helpers'
+import database from '../../modules/database'
 
 export const createAchievementsForCourseCategories =
   async (): Promise<void> => {
