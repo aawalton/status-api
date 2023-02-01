@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-console */
 import Trakt from 'trakt.tv'
 
@@ -100,7 +103,7 @@ const createMovieAchievements = async (
   level?: number
 ) => {
   /* Find or create achievement for the movie */
-  await findOrCreateAchievementByTitle({
+  const movieAchievement = await findOrCreateAchievementByTitle({
     title: `Watch ${movie.title} Movie`,
     type: 'boolean',
     categoryName: 'fun',
@@ -110,6 +113,7 @@ const createMovieAchievements = async (
     link: `https://trakt.tv/movies/${movie.ids.slug}`,
     level,
   })
+  console.log(movieAchievement.title)
 }
 
 const createEpisodeAchievements = async (
@@ -255,11 +259,12 @@ const createListAchievements = async (
     type: 'movie,show,season,episode',
     extended: 'full',
   })
-  await Promise.all(
-    listItems.data.map((listItem: TraktListItem) =>
-      createListItemAchievements(listItem, listAchievement)
-    )
-  )
+  for (const listItem of listItems.data) {
+    await createListItemAchievements(listItem as TraktListItem, listAchievement)
+    await new Promise((resolve) => {
+      setTimeout(resolve, 1000)
+    })
+  }
 }
 
 export const createTraktAchievements = async () => {
@@ -281,9 +286,10 @@ export const createTraktAchievements = async () => {
   console.log(parentAchievement.title)
 
   /* Find or create achievements for individual lists */
-  await Promise.all(
-    likes.data.map((like: TraktLike) =>
-      createListAchievements(like.list, parentAchievement)
-    )
-  )
+  for (const like of likes.data) {
+    await createListAchievements((like as TraktLike).list, parentAchievement)
+    await new Promise((resolve) => {
+      setTimeout(resolve, 1000)
+    })
+  }
 }
