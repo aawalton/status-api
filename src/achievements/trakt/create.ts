@@ -63,19 +63,23 @@ type TraktEpisode = {
 
 type TraktListItem =
   | {
+      rank: number
       type: 'movie'
       movie: TraktMovie
     }
   | {
+      rank: number
       type: 'show'
       show: TraktShow
     }
   | {
+      rank: number
       type: 'season'
       season: TraktSeason
       show: TraktShow
     }
   | {
+      rank: number
       type: 'episode'
       episode: TraktEpisode
       show: TraktShow
@@ -92,7 +96,8 @@ type TraktLike = { list: TraktList }
 
 const createMovieAchievements = async (
   movie: TraktMovie,
-  parentAchievement: achievements
+  parentAchievement: achievements,
+  level?: number
 ) => {
   /* Find or create achievement for the movie */
   await findOrCreateAchievementByTitle({
@@ -103,13 +108,15 @@ const createMovieAchievements = async (
     circleName: 'solo',
     parentAchievementId: parentAchievement.id,
     link: `https://trakt.tv/movies/${movie.ids.slug}`,
+    level,
   })
 }
 
 const createEpisodeAchievements = async (
   show: TraktShow,
   episode: TraktEpisode,
-  parentAchievement: achievements
+  parentAchievement: achievements,
+  level?: number
 ) => {
   /* Find or create achievement for the episode */
   const episodeAchievement = await findOrCreateAchievementByTitle({
@@ -120,7 +127,7 @@ const createEpisodeAchievements = async (
     circleName: 'solo',
     parentAchievementId: parentAchievement.id,
     link: `https://trakt.tv/shows/${show.ids.slug}/seasons/${episode.season}/episodes/${episode.number}`,
-    level: episode.number,
+    level: level ?? episode.number,
   })
   console.log(episodeAchievement.title)
 }
@@ -131,7 +138,8 @@ const range = (start: number, end: number, length = end - start) =>
 const createSeasonAchievements = async (
   show: TraktShow,
   season: TraktSeason,
-  parentAchievement: achievements
+  parentAchievement: achievements,
+  level?: number
 ) => {
   /* Find or create achievement for the season */
   const seasonAchievement = await findOrCreateAchievementByTitle({
@@ -142,7 +150,7 @@ const createSeasonAchievements = async (
     circleName: 'solo',
     parentAchievementId: parentAchievement.id,
     link: `https://trakt.tv/shows/${show.ids.slug}/seasons/${season.number}`,
-    level: season.number,
+    level: level ?? season.number,
   })
   console.log(seasonAchievement.title)
 
@@ -161,7 +169,8 @@ const createSeasonAchievements = async (
 
 const createShowAchievements = async (
   show: TraktShow,
-  parentAchievement: achievements
+  parentAchievement: achievements,
+  level?: number
 ) => {
   /* Find or create achievement for the show */
   const showAchievement = await findOrCreateAchievementByTitle({
@@ -172,6 +181,7 @@ const createShowAchievements = async (
     circleName: 'solo',
     parentAchievementId: parentAchievement.id,
     link: `https://trakt.tv/shows/${show.ids.slug}`,
+    level,
   })
   console.log(showAchievement.title)
 
@@ -194,20 +204,30 @@ const createListItemAchievements = (
 ) => {
   const { type } = listItem
   if (type === 'movie')
-    return createMovieAchievements(listItem.movie, parentAchievement)
+    return createMovieAchievements(
+      listItem.movie,
+      parentAchievement,
+      listItem.rank
+    )
   if (type === 'show')
-    return createShowAchievements(listItem.show, parentAchievement)
+    return createShowAchievements(
+      listItem.show,
+      parentAchievement,
+      listItem.rank
+    )
   if (type === 'season')
     return createSeasonAchievements(
       listItem.show,
       listItem.season,
-      parentAchievement
+      parentAchievement,
+      listItem.rank
     )
   if (type === 'episode')
     return createEpisodeAchievements(
       listItem.show,
       listItem.episode,
-      parentAchievement
+      parentAchievement,
+      listItem.rank
     )
   return undefined
 }
@@ -220,7 +240,7 @@ const createListAchievements = async (
   if (!list.name) return
   const listAchievement = await findOrCreateAchievementByTitle({
     title: `Complete ${list.name}`,
-    type: 'collection',
+    type: 'sequence',
     categoryName: 'fun',
     formatName: 'video',
     circleName: 'solo',
