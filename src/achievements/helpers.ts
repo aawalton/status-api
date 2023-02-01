@@ -9,6 +9,8 @@ export const findOrCreateAchievementByTitle = async ({
   parentAchievementId,
   target,
   level,
+  description,
+  link,
 }: {
   title: string
   type: string
@@ -18,6 +20,8 @@ export const findOrCreateAchievementByTitle = async ({
   parentAchievementId?: string
   target?: number
   level?: number
+  description?: string
+  link?: string
 }) => {
   const achievement = await database.achievements.findOne({
     where: { title },
@@ -32,5 +36,7 @@ export const findOrCreateAchievementByTitle = async ({
     circleName,
     target,
     level,
+    description,
+    link,
   })
 }
