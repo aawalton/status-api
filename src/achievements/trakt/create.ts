@@ -257,6 +257,7 @@ const createListAchievements = async (
 
   /* Find or create achievements for the list items */
   const listItems = await trakt.lists.items({
+    username: list.user.ids.slug,
     id: list.ids.slug,
     type: 'movie,show,season,episode',
     extended: 'full',
@@ -291,7 +292,7 @@ export const createTraktAchievements = async () => {
   for (const like of likes.data) {
     await createListAchievements((like as TraktLike).list, parentAchievement)
     await new Promise((resolve) => {
-      setTimeout(resolve, 1000)
+      setTimeout(resolve, 500)
     })
   }
 }
