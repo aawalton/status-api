@@ -112,6 +112,7 @@ const createMovieAchievements = async (
     parentAchievementId: parentAchievement.id,
     link: `https://trakt.tv/movies/${movie.ids.slug}`,
     level,
+    target: 1,
   })
   console.log(movieAchievement.title)
 }
@@ -132,6 +133,7 @@ const createEpisodeAchievements = async (
     parentAchievementId: parentAchievement.id,
     link: `https://trakt.tv/shows/${show.ids.slug}/seasons/${episode.season}/episodes/${episode.number}`,
     level: level ?? episode.number,
+    target: 1,
   })
   console.log(episodeAchievement.title)
 }
@@ -262,7 +264,7 @@ const createListAchievements = async (
   for (const listItem of listItems.data) {
     await createListItemAchievements(listItem as TraktListItem, listAchievement)
     await new Promise((resolve) => {
-      setTimeout(resolve, 1000)
+      setTimeout(resolve, 400)
     })
   }
 }
