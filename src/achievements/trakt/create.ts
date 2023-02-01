@@ -20,6 +20,10 @@ const trakt = new Trakt(options)
 export const getTraktDeviceToken = async () => {
   const poll = await trakt.get_codes()
   console.log(poll)
+  return trakt.poll_access(poll)
 }
 
-export const createTraktAchievements = async () => {}
+export const createTraktAchievements = async () => {
+  await getTraktDeviceToken()
+  console.log('access')
+}
