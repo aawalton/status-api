@@ -1,8 +1,8 @@
+/* eslint-disable no-console */
 import Trakt from 'trakt.tv'
 
 import { achievements } from '../../../generated/tables/achievements'
 import { findOrCreateAchievementByTitle } from '../helpers'
-/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -36,33 +36,29 @@ export const getTraktDeviceToken = async () => {
   console.log(newToken)
 }
 
-type TraktIds = {
-  slug: string
-}
-
 type TraktUser = {
   username: string
-  ids: TraktIds
+  ids: { slug: string }
 }
 
 type TraktMovie = {
   title: string
-  ids: TraktIds
+  ids: { slug: string }
 }
 
 type TraktShow = {
   title: string
-  ids: TraktIds
+  ids: { slug: string }
 }
 
 type TraktSeason = {
-  title: string
-  ids: TraktIds
+  number: number
+  episode_count: number
 }
 
 type TraktEpisode = {
-  title: string
-  ids: TraktIds
+  season: number
+  number: number
 }
 
 type TraktListItem =
@@ -77,16 +73,18 @@ type TraktListItem =
   | {
       type: 'season'
       season: TraktSeason
+      show: TraktShow
     }
   | {
       type: 'episode'
       episode: TraktEpisode
+      show: TraktShow
     }
 
 type TraktList = {
   name: string
   description: string
-  ids: TraktIds
+  ids: { slug: string }
   user: TraktUser
 }
 
@@ -98,7 +96,7 @@ const createMovieAchievements = async (
 ) => {
   /* Find or create achievement for the movie */
   await findOrCreateAchievementByTitle({
-    title: `Watch ${movie.title}`,
+    title: `Watch ${movie.title} Movie`,
     type: 'boolean',
     categoryName: 'fun',
     formatName: 'video',
@@ -108,54 +106,86 @@ const createMovieAchievements = async (
   })
 }
 
+const createEpisodeAchievements = async (
+  show: TraktShow,
+  episode: TraktEpisode,
+  parentAchievement: achievements
+) => {
+  /* Find or create achievement for the episode */
+  const episodeAchievement = await findOrCreateAchievementByTitle({
+    title: `Watch ${show.title} Seasons ${episode.season} Episode ${episode.number}`,
+    type: 'boolean',
+    categoryName: 'fun',
+    formatName: 'video',
+    circleName: 'solo',
+    parentAchievementId: parentAchievement.id,
+    link: `https://trakt.tv/shows/${show.ids.slug}/seasons/${episode.season}/episodes/${episode.number}`,
+    level: episode.number,
+  })
+  console.log(episodeAchievement.title)
+}
+
+const range = (start: number, end: number, length = end - start) =>
+  Array.from({ length }, (_, i) => start + i)
+
+const createSeasonAchievements = async (
+  show: TraktShow,
+  season: TraktSeason,
+  parentAchievement: achievements
+) => {
+  /* Find or create achievement for the season */
+  const seasonAchievement = await findOrCreateAchievementByTitle({
+    title: `Watch ${show.title} Seasons ${season.number}`,
+    type: 'sequence',
+    categoryName: 'fun',
+    formatName: 'video',
+    circleName: 'solo',
+    parentAchievementId: parentAchievement.id,
+    link: `https://trakt.tv/shows/${show.ids.slug}/seasons/${season.number}`,
+    level: season.number,
+  })
+  console.log(seasonAchievement.title)
+
+  /* Find or create achievements for the episodes */
+  const episodes = range(1, season.episode_count)
+  await Promise.all(
+    episodes.map((episodeNumber) =>
+      createEpisodeAchievements(
+        show,
+        { season: season.number, number: episodeNumber },
+        seasonAchievement
+      )
+    )
+  )
+}
+
 const createShowAchievements = async (
   show: TraktShow,
   parentAchievement: achievements
 ) => {
   /* Find or create achievement for the show */
-  await findOrCreateAchievementByTitle({
+  const showAchievement = await findOrCreateAchievementByTitle({
     title: `Watch ${show.title}`,
     type: 'sequence',
     categoryName: 'fun',
     formatName: 'video',
     circleName: 'solo',
     parentAchievementId: parentAchievement.id,
-    link: `https://trakt.tv/shows/${show.ids.slug}}`,
+    link: `https://trakt.tv/shows/${show.ids.slug}`,
   })
+  console.log(showAchievement.title)
 
   /* Find or create achievements for the seasons and episodes */
-}
-
-const createSeasonAchievements = async (
-  season: TraktSeason,
-  parentAchievement: achievements
-) => {
-  /* Find or create achievement for the season */
-  await findOrCreateAchievementByTitle({
-    title: `Watch ${season.title}`,
-    type: 'sequence',
-    categoryName: 'fun',
-    formatName: 'video',
-    circleName: 'solo',
-    parentAchievementId: parentAchievement.id,
+  const summary = await trakt.seasons.summary({
+    id: show.ids.slug,
+    extended: 'full',
   })
-
-  /* Find or create achievements for the episodes */
-}
-
-const createEpisodeAchievements = async (
-  episode: TraktEpisode,
-  parentAchievement: achievements
-) => {
-  /* Find or create achievement for the episode */
-  await findOrCreateAchievementByTitle({
-    title: `Watch ${episode.title}`,
-    type: 'sequence',
-    categoryName: 'fun',
-    formatName: 'video',
-    circleName: 'solo',
-    parentAchievementId: parentAchievement.id,
-  })
+  const seasons = summary.data
+  await Promise.all(
+    seasons.map((season: TraktSeason) =>
+      createSeasonAchievements(show, season, showAchievement)
+    )
+  )
 }
 
 const createListItemAchievements = (
@@ -168,9 +198,17 @@ const createListItemAchievements = (
   if (type === 'show')
     return createShowAchievements(listItem.show, parentAchievement)
   if (type === 'season')
-    return createSeasonAchievements(listItem.season, parentAchievement)
+    return createSeasonAchievements(
+      listItem.show,
+      listItem.season,
+      parentAchievement
+    )
   if (type === 'episode')
-    return createEpisodeAchievements(listItem.episode, parentAchievement)
+    return createEpisodeAchievements(
+      listItem.show,
+      listItem.episode,
+      parentAchievement
+    )
   return undefined
 }
 
@@ -178,8 +216,6 @@ const createListAchievements = async (
   list: TraktList,
   parentAchievement: achievements
 ) => {
-  console.log(list)
-
   /* Find or create achievement for the list */
   if (!list.name) return
   const listAchievement = await findOrCreateAchievementByTitle({
@@ -191,11 +227,13 @@ const createListAchievements = async (
     parentAchievementId: parentAchievement.id,
     link: `https://trakt.tv/users/${list.user.ids.slug}/lists/${list.ids.slug}`,
   })
+  console.log(listAchievement.title)
 
   /* Find or create achievements for the list items */
   const listItems = await trakt.lists.items({
     id: list.ids.slug,
     type: 'movie,show,season,episode',
+    extended: 'full',
   })
   await Promise.all(
     listItems.data.map((listItem: TraktListItem) =>
@@ -220,6 +258,7 @@ export const createTraktAchievements = async () => {
     circleName: 'solo',
     link: 'https://trakt.tv/users/aawalton/lists/liked',
   })
+  console.log(parentAchievement.title)
 
   /* Find or create achievements for individual lists */
   await Promise.all(

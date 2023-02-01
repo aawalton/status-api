@@ -1,3 +1,4 @@
+import { achievements } from '../../generated/tables/achievements'
 import database from '../modules/database'
 
 export const findOrCreateAchievementByTitle = async ({
@@ -22,21 +23,36 @@ export const findOrCreateAchievementByTitle = async ({
   level?: number
   description?: string
   link?: string
-}) => {
+}): Promise<achievements> => {
   const achievement = await database.achievements.findOne({
     where: { title },
   })
   if (achievement) return achievement
-  return database.achievements.create({
-    title,
-    type,
-    categoryName,
-    parentAchievementId,
-    formatName,
-    circleName,
-    target,
-    level,
-    description,
-    link,
-  })
+  return database.achievements
+    .create({
+      title,
+      type,
+      categoryName,
+      parentAchievementId,
+      formatName,
+      circleName,
+      target,
+      level,
+      description,
+      link,
+    })
+    .catch(() =>
+      findOrCreateAchievementByTitle({
+        title,
+        type,
+        categoryName,
+        formatName,
+        circleName,
+        parentAchievementId,
+        target,
+        level,
+        description,
+        link,
+      })
+    )
 }
