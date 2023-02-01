@@ -113,7 +113,7 @@ const createEpisodeAchievements = async (
 ) => {
   /* Find or create achievement for the episode */
   const episodeAchievement = await findOrCreateAchievementByTitle({
-    title: `Watch ${show.title} Seasons ${episode.season} Episode ${episode.number}`,
+    title: `Watch ${show.title} Season ${episode.season} Episode ${episode.number}`,
     type: 'boolean',
     categoryName: 'fun',
     formatName: 'video',
@@ -135,7 +135,7 @@ const createSeasonAchievements = async (
 ) => {
   /* Find or create achievement for the season */
   const seasonAchievement = await findOrCreateAchievementByTitle({
-    title: `Watch ${show.title} Seasons ${season.number}`,
+    title: `Watch ${show.title} Season ${season.number}`,
     type: 'sequence',
     categoryName: 'fun',
     formatName: 'video',
