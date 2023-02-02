@@ -256,7 +256,7 @@ const createListAchievements = async (
   console.log(listAchievement.title)
 
   /* Find or create achievements for the list items */
-  const listItems = await trakt.lists.items({
+  const listItems = await trakt.users.list.items.get({
     username: list.user.ids.slug,
     id: list.ids.slug,
     type: 'movie,show,season,episode',
