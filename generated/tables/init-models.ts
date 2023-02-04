@@ -13,6 +13,8 @@ import { achievementTypes as _achievementTypes } from "./achievementTypes";
 import type { achievementTypesAttributes, achievementTypesCreationAttributes } from "./achievementTypes";
 import { achievements as _achievements } from "./achievements";
 import type { achievementsAttributes, achievementsCreationAttributes } from "./achievements";
+import { conquerorChallenges as _conquerorChallenges } from "./conquerorChallenges";
+import type { conquerorChallengesAttributes, conquerorChallengesCreationAttributes } from "./conquerorChallenges";
 import { esoCharacters as _esoCharacters } from "./esoCharacters";
 import type { esoCharactersAttributes, esoCharactersCreationAttributes } from "./esoCharacters";
 import { esoSkills as _esoSkills } from "./esoSkills";
@@ -38,6 +40,7 @@ export {
   _achievementPoints as achievementPoints,
   _achievementTypes as achievementTypes,
   _achievements as achievements,
+  _conquerorChallenges as conquerorChallenges,
   _esoCharacters as esoCharacters,
   _esoSkills as esoSkills,
   _esoZones as esoZones,
@@ -63,6 +66,8 @@ export type {
   achievementTypesCreationAttributes,
   achievementsAttributes,
   achievementsCreationAttributes,
+  conquerorChallengesAttributes,
+  conquerorChallengesCreationAttributes,
   esoCharactersAttributes,
   esoCharactersCreationAttributes,
   esoSkillsAttributes,
@@ -89,6 +94,7 @@ export function initModels(sequelize: Sequelize) {
   const achievementPoints = _achievementPoints.initModel(sequelize);
   const achievementTypes = _achievementTypes.initModel(sequelize);
   const achievements = _achievements.initModel(sequelize);
+  const conquerorChallenges = _conquerorChallenges.initModel(sequelize);
   const esoCharacters = _esoCharacters.initModel(sequelize);
   const esoSkills = _esoSkills.initModel(sequelize);
   const esoZones = _esoZones.initModel(sequelize);
@@ -117,6 +123,7 @@ export function initModels(sequelize: Sequelize) {
     achievementPoints: achievementPoints,
     achievementTypes: achievementTypes,
     achievements: achievements,
+    conquerorChallenges: conquerorChallenges,
     esoCharacters: esoCharacters,
     esoSkills: esoSkills,
     esoZones: esoZones,
