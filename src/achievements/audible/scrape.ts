@@ -101,8 +101,6 @@ const getBooksForURL = async (author: string, pageUrl: string) => {
   /* Save the results */
   await database.audibleBooks.bulkCreate(validBooks, { ignoreDuplicates: true })
 
-  console.log(page, validBooks.length)
-
   /* Shut down puppeteer */
   await browser.close()
 }
@@ -136,6 +134,7 @@ const getPagesForAuthor = async (author: string) => {
 
 export const getAudibleAuthors = async () => {
   for (const author of authors) {
+    console.log(author)
     await getPagesForAuthor(author)
   }
 }
