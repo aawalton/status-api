@@ -34,6 +34,9 @@ const findOrCreateAchievementForAuthor = async (
   author: string,
   parentAchievementId: string
 ) => {
+  const cleanAuthor = author.replace(' ', '+')
+  const link = `https://audible.com/search?searchAuthor=${cleanAuthor}&pageSize=50`
+
   const achievement = await findOrCreateAchievementByTitle({
     title: `Listen to ${author} Audible Books`,
     type: 'collection',
@@ -41,6 +44,7 @@ const findOrCreateAchievementForAuthor = async (
     formatName: 'audio',
     circleName: 'solo',
     parentAchievementId,
+    link,
   })
   return achievement
 }
