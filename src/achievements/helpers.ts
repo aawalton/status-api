@@ -25,7 +25,7 @@ export const findOrCreateAchievementByTitle = async ({
   link?: string
 }): Promise<achievements> => {
   const achievement = await database.achievements.findOne({
-    where: { title },
+    where: { title, parentAchievementId },
   })
   if (achievement) return achievement
   return database.achievements
