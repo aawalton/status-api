@@ -4,6 +4,8 @@
 
 import puppeteer from 'puppeteer'
 
+import database from '../../modules/database'
+
 const favoriteAuthors = ['Brandon Sanderson', 'David Weber']
 
 const classicAuthors = ['Isaac Asimov', 'Robert Heinlein', 'Anne McCaffrey']
@@ -72,7 +74,20 @@ const getBooksForURL = async (pageUrl: string) => {
   )
 
   /* Filter out invalid books */
-  const validBooks = books.filter((book) => book.language?.includes('English'))
+  type ValidBook = {
+    title: string
+    url: string
+    series?: string
+    length?: string
+    language?: string
+    releaseDate?: string
+  }
+  const validBooks = books.filter(
+    (book) => book.title && book.url && book.language?.includes('English')
+  ) as ValidBook[]
+
+  /* Save the results */
+  await database.audibleBooks.bulkCreate(validBooks, { ignoreDuplicates: true })
 
   console.log(page, validBooks.length)
 
