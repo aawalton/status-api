@@ -6,11 +6,9 @@ import puppeteer from 'puppeteer'
 
 import database from '../../modules/database'
 
-const favoriteAuthors = ['Brandon Sanderson', 'David Weber']
-
-const classicAuthors = ['Isaac Asimov', 'Robert Heinlein', 'Anne McCaffrey']
-
 const progressionAuthors = [
+  'J.M.+Clarke',
+  'Will-Wight',
   'pirateaba',
   'Travis Bagwell',
   'TheFirstDefier',
@@ -21,7 +19,11 @@ const progressionAuthors = [
   'Noret Flood',
 ]
 
-const authors = [...favoriteAuthors, ...classicAuthors, ...progressionAuthors]
+const favoriteAuthors = ['Brandon Sanderson', 'David Weber']
+
+const classicAuthors = ['Isaac Asimov', 'Robert Heinlein', 'Anne McCaffrey']
+
+const authors = [...progressionAuthors, ...favoriteAuthors, ...classicAuthors]
 
 const getBooksForURL = async (author: string, pageUrl: string) => {
   /* Set up puppeteer */
