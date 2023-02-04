@@ -138,24 +138,3 @@ export const getAudibleAuthors = async () => {
     await getPagesForAuthor(author)
   }
 }
-
-// /* Save data in conqueror_challenges */
-// await database.conquerorChallenges.bulkCreate(validChallenges, {
-//   ignoreDuplicates: true,
-// })
-
-// /* Find or create the parent achievement */
-// const parentAchievement = await findOrCreateAchievementByTitle({
-//   title: 'Complete All Conqueror Challenges',
-//   type: 'sequence',
-//   categoryName: 'health',
-//   formatName: 'automatic',
-//   circleName: 'solo',
-// })
-
-// /* Find or create the child achievements */
-// await Promise.all(
-//   validChallenges.map((challenge) =>
-//     createAchievement(challenge, parentAchievement.id)
-//   )
-// )

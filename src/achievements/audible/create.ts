@@ -13,7 +13,7 @@ const parseDuration = (duration?: string): number => {
   const firstValue = _.toNumber(durationValue.split(' ')[0].trim())
   const firstUnits = durationValue.split(' ')[1].trim()
   if (firstUnits === 'mins') return firstValue
-  const minutes = _.toNumber(durationValue.split(' ')[3]?.trim()) ?? 0
+  const minutes = _.toNumber(durationValue.split(' ')[3]?.trim()) || 0
   return firstValue * 60 + minutes
 }
 
