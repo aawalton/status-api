@@ -1,35 +1,8 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-console */
-// import _ from 'lodash'
+
 import puppeteer from 'puppeteer'
-
-// import database from '../../modules/database'
-// import { findOrCreateAchievementByTitle } from '../helpers'
-
-// type ValidChallenge = { title: string; miles: number; url: string }
-
-// const parseDistance = (distance: string) => {
-//   const imperial = distance.split('/')[0]
-//   const pieces = imperial.split(' ')
-//   const miles = pieces[0].replace(',', '').replace('mi', '')
-//   return _.toNumber(miles)
-// }
-
-// const createAchievement = (
-//   challenge: ValidChallenge,
-//   parentAchievementId: string
-// ) =>
-//   findOrCreateAchievementByTitle({
-//     title: challenge.title,
-//     type: 'integer',
-//     categoryName: 'health',
-//     formatName: 'automatic',
-//     circleName: 'solo',
-//     target: challenge.miles,
-//     link: challenge.url,
-//     parentAchievementId,
-//   })
 
 const favoriteAuthors = ['Brandon Sanderson', 'David Weber']
 
@@ -84,16 +57,14 @@ const getBooksForURL = async (pageUrl: string) => {
         .catch(() => {})
 
       // get the language
-      const language = await card.$eval(
-        'li.languageLabel > span',
-        (s) => s.innerText
-      )
+      const language = await card
+        .$eval('li.languageLabel > span', (s) => s.innerText)
+        .catch(() => {})
 
       // get the release date
-      const releaseDate = await card.$eval(
-        'li.releaseDateLabel > span',
-        (s) => s.innerText
-      )
+      const releaseDate = await card
+        .$eval('li.releaseDateLabel > span', (s) => s.innerText)
+        .catch(() => {})
 
       // return the results
       return { title, url, series, length, language, releaseDate }
@@ -101,29 +72,9 @@ const getBooksForURL = async (pageUrl: string) => {
   )
 
   /* Filter out invalid books */
-  const validBooks = books.filter((book) => book.language.includes('English'))
+  const validBooks = books.filter((book) => book.language?.includes('English'))
+
   console.log(page, validBooks.length)
-
-  // /* Save data in conqueror_challenges */
-  // await database.conquerorChallenges.bulkCreate(validChallenges, {
-  //   ignoreDuplicates: true,
-  // })
-
-  // /* Find or create the parent achievement */
-  // const parentAchievement = await findOrCreateAchievementByTitle({
-  //   title: 'Complete All Conqueror Challenges',
-  //   type: 'sequence',
-  //   categoryName: 'health',
-  //   formatName: 'automatic',
-  //   circleName: 'solo',
-  // })
-
-  // /* Find or create the child achievements */
-  // await Promise.all(
-  //   validChallenges.map((challenge) =>
-  //     createAchievement(challenge, parentAchievement.id)
-  //   )
-  // )
 
   /* Shut down puppeteer */
   await browser.close()
@@ -161,3 +112,24 @@ export const getAudibleAuthors = async () => {
     await getPagesForAuthor(author)
   }
 }
+
+// /* Save data in conqueror_challenges */
+// await database.conquerorChallenges.bulkCreate(validChallenges, {
+//   ignoreDuplicates: true,
+// })
+
+// /* Find or create the parent achievement */
+// const parentAchievement = await findOrCreateAchievementByTitle({
+//   title: 'Complete All Conqueror Challenges',
+//   type: 'sequence',
+//   categoryName: 'health',
+//   formatName: 'automatic',
+//   circleName: 'solo',
+// })
+
+// /* Find or create the child achievements */
+// await Promise.all(
+//   validChallenges.map((challenge) =>
+//     createAchievement(challenge, parentAchievement.id)
+//   )
+// )
