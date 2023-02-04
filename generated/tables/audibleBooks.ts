@@ -3,6 +3,7 @@ import { DataTypes, Model, Optional } from 'sequelize';
 
 export interface audibleBooksAttributes {
   id: string;
+  author: string;
   title: string;
   url: string;
   series?: string;
@@ -21,6 +22,7 @@ export type audibleBooksCreationAttributes = Optional<audibleBooksAttributes, au
 
 export class audibleBooks extends Model<audibleBooksAttributes, audibleBooksCreationAttributes> implements audibleBooksAttributes {
   id!: string;
+  author!: string;
   title!: string;
   url!: string;
   series?: string;
@@ -39,6 +41,10 @@ export class audibleBooks extends Model<audibleBooksAttributes, audibleBooksCrea
       allowNull: false,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
+    },
+    author: {
+      type: DataTypes.TEXT,
+      allowNull: false
     },
     title: {
       type: DataTypes.TEXT,
