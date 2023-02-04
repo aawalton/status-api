@@ -10,7 +10,18 @@ const favoriteAuthors = ['Brandon Sanderson', 'David Weber']
 
 const classicAuthors = ['Isaac Asimov', 'Robert Heinlein', 'Anne McCaffrey']
 
-const authors = [...favoriteAuthors, ...classicAuthors]
+const progressionAuthors = [
+  'pirateaba',
+  'Travis Bagwell',
+  'TheFirstDefier',
+  'Rhaegar',
+  'Zogarth',
+  'Shirtaloon',
+  'RinoZ',
+  'Noret Flood',
+]
+
+const authors = [...favoriteAuthors, ...classicAuthors, ...progressionAuthors]
 
 const getBooksForURL = async (author: string, pageUrl: string) => {
   /* Set up puppeteer */

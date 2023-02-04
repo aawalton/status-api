@@ -115,7 +115,7 @@ export const createAchievements = async () => {
 
   /* Find or create achievements for books */
   for (const book of books) {
-    console.log(book.title, book.series, book.length)
+    console.log(book.title)
     await findOrCreateAchievements(book, parentAchievement.id)
   }
 }
