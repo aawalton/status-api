@@ -28,31 +28,32 @@ export const findOrCreateAchievementByTitle = async ({
     where: parentAchievementId ? { title, parentAchievementId } : { title },
   })
   if (achievement) return achievement
-  return database.achievements
-    .create({
-      title,
-      type,
-      categoryName,
-      parentAchievementId,
-      formatName,
-      circleName,
-      target,
-      level,
-      description,
-      link,
-    })
-    .catch(() =>
-      findOrCreateAchievementByTitle({
-        title,
-        type,
-        categoryName,
-        formatName,
-        circleName,
-        parentAchievementId,
-        target,
-        level,
-        description,
-        link,
-      })
-    )
+  return database.achievements.create({
+    title,
+    type,
+    categoryName,
+    parentAchievementId,
+    formatName,
+    circleName,
+    target,
+    level,
+    description,
+    link,
+  })
+  // .catch((error) => {
+  //   // eslint-disable-next-line no-console
+  //   console.log(error)
+  //   return findOrCreateAchievementByTitle({
+  //     title,
+  //     type,
+  //     categoryName,
+  //     formatName,
+  //     circleName,
+  //     parentAchievementId,
+  //     target,
+  //     level,
+  //     description,
+  //     link,
+  //   })
+  // })
 }
