@@ -1,7 +1,7 @@
-import { getAudibleBooks } from '../achievements/audible/create'
+import { getAudibleAuthors } from '../achievements/audible/create'
 
 const run = async () => {
-  await getAudibleBooks()
+  await getAudibleAuthors()
   process.exit(0)
 }
 

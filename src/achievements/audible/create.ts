@@ -1,9 +1,11 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-console */
 // import _ from 'lodash'
 import puppeteer from 'puppeteer'
 
-import database from '../../modules/database'
-import { findOrCreateAchievementByTitle } from '../helpers'
+// import database from '../../modules/database'
+// import { findOrCreateAchievementByTitle } from '../helpers'
 
 // type ValidChallenge = { title: string; miles: number; url: string }
 
@@ -29,7 +31,13 @@ import { findOrCreateAchievementByTitle } from '../helpers'
 //     parentAchievementId,
 //   })
 
-export const getAudibleBooks = async () => {
+const favoriteAuthors = ['Brandon Sanderson', 'David Weber']
+
+const classicAuthors = ['Isaac Asimov', 'Robert Heinlein', 'Anne McCaffrey']
+
+const authors = [...favoriteAuthors, ...classicAuthors]
+
+const getBooksForURL = async (pageUrl: string) => {
   /* Set up puppeteer */
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
@@ -39,16 +47,13 @@ export const getAudibleBooks = async () => {
   /* Load the page */
   const promises = []
   promises.push(page.waitForNavigation())
-  await page.goto(
-    'https://audible.com/search?searchAuthor=Brandon+Sanderson&pageSize=50'
-  )
+  await page.goto(pageUrl)
   await Promise.all(promises)
 
   /* Find the book cards */
   const cards = await page.$$(
     'div.bc-a11y-skiplink-target > span > ul.bc-list > li.bc-list-item'
   )
-  console.log(cards.length)
 
   /* Collect title, url, series, length, language, and release date from the cards */
   const books = await Promise.all(
@@ -74,10 +79,9 @@ export const getAudibleBooks = async () => {
       const series = seriesElements.join('')
 
       // get the length
-      const length = await card.$eval(
-        'li.runtimeLabel > span',
-        (s) => s.innerText
-      )
+      const length = await card
+        .$eval('li.runtimeLabel > span', (s) => s.innerText)
+        .catch(() => {})
 
       // get the language
       const language = await card.$eval(
@@ -93,28 +97,12 @@ export const getAudibleBooks = async () => {
 
       // return the results
       return { title, url, series, length, language, releaseDate }
-
-      // return { title, url, series, length, language, releaseDate }
-      // const body = await card.$('div.tc-card-body')
-      // const title = await body
-      //   ?.$eval('p.tc-card-name', (s) => s.textContent)
-      //   .catch(() => {})
-      // const distance = await body
-      //   ?.$eval('p.tc-card-distance', (s) => s.textContent)
-      //   .catch(() => {})
-
-      // // parse the distance
-      // const miles = distance ? parseDistance(distance) : null
-
-      // return { title, miles, url }
     })
   )
-  console.log(books)
 
-  // /* Filter out the invalid challenge cards */
-  // const validChallenges = challenges.filter(
-  //   (challenge) => challenge.title && challenge.miles && challenge.url
-  // ) as ValidChallenge[]
+  /* Filter out invalid books */
+  const validBooks = books.filter((book) => book.language.includes('English'))
+  console.log(page, validBooks.length)
 
   // /* Save data in conqueror_challenges */
   // await database.conquerorChallenges.bulkCreate(validChallenges, {
@@ -139,4 +127,37 @@ export const getAudibleBooks = async () => {
 
   /* Shut down puppeteer */
   await browser.close()
+}
+
+const getPagesForAuthor = async (author: string) => {
+  /* Set up puppeteer */
+  const browser = await puppeteer.launch()
+  const page = await browser.newPage()
+  const timeout = 300000
+  page.setDefaultTimeout(timeout)
+
+  /* Load the page */
+  const promises = []
+  promises.push(page.waitForNavigation())
+  const cleanAuthor = author.replace(' ', '+')
+  const url = `https://audible.com/search?searchAuthor=${cleanAuthor}&pageSize=50`
+  await page.goto(url)
+  await Promise.all(promises)
+
+  /* Find the page links */
+  const newUrls = await page.$$eval('ul.pagingElements > li > a', (as) =>
+    as.map((s) => s.href)
+  )
+  const urls = [url, ...newUrls]
+
+  /* Get books for each page */
+  for (const u of urls) {
+    await getBooksForURL(u)
+  }
+}
+
+export const getAudibleAuthors = async () => {
+  for (const author of authors) {
+    await getPagesForAuthor(author)
+  }
 }
