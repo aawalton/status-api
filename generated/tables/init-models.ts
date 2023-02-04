@@ -13,6 +13,8 @@ import { achievementTypes as _achievementTypes } from "./achievementTypes";
 import type { achievementTypesAttributes, achievementTypesCreationAttributes } from "./achievementTypes";
 import { achievements as _achievements } from "./achievements";
 import type { achievementsAttributes, achievementsCreationAttributes } from "./achievements";
+import { audibleBooks as _audibleBooks } from "./audibleBooks";
+import type { audibleBooksAttributes, audibleBooksCreationAttributes } from "./audibleBooks";
 import { conquerorChallenges as _conquerorChallenges } from "./conquerorChallenges";
 import type { conquerorChallengesAttributes, conquerorChallengesCreationAttributes } from "./conquerorChallenges";
 import { esoCharacters as _esoCharacters } from "./esoCharacters";
@@ -40,6 +42,7 @@ export {
   _achievementPoints as achievementPoints,
   _achievementTypes as achievementTypes,
   _achievements as achievements,
+  _audibleBooks as audibleBooks,
   _conquerorChallenges as conquerorChallenges,
   _esoCharacters as esoCharacters,
   _esoSkills as esoSkills,
@@ -66,6 +69,8 @@ export type {
   achievementTypesCreationAttributes,
   achievementsAttributes,
   achievementsCreationAttributes,
+  audibleBooksAttributes,
+  audibleBooksCreationAttributes,
   conquerorChallengesAttributes,
   conquerorChallengesCreationAttributes,
   esoCharactersAttributes,
@@ -94,6 +99,7 @@ export function initModels(sequelize: Sequelize) {
   const achievementPoints = _achievementPoints.initModel(sequelize);
   const achievementTypes = _achievementTypes.initModel(sequelize);
   const achievements = _achievements.initModel(sequelize);
+  const audibleBooks = _audibleBooks.initModel(sequelize);
   const conquerorChallenges = _conquerorChallenges.initModel(sequelize);
   const esoCharacters = _esoCharacters.initModel(sequelize);
   const esoSkills = _esoSkills.initModel(sequelize);
@@ -123,6 +129,7 @@ export function initModels(sequelize: Sequelize) {
     achievementPoints: achievementPoints,
     achievementTypes: achievementTypes,
     achievements: achievements,
+    audibleBooks: audibleBooks,
     conquerorChallenges: conquerorChallenges,
     esoCharacters: esoCharacters,
     esoSkills: esoSkills,
