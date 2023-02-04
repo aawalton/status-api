@@ -23,7 +23,7 @@ const parseSeries = (series: string): { name: string; level?: number } => {
 
   const seriesNumberValue = seriesValue?.split(',')[1]?.trim()
   const seriesNumber = seriesNumberValue?.split(' ')[1]?.trim()
-  const seriesInteger = seriesNumber
+  const seriesInteger = _.isNumber(seriesNumber)
     ? Math.trunc(_.toNumber(seriesNumber) * 10)
     : 0
 
