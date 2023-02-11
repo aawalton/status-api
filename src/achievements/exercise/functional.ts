@@ -2,9 +2,19 @@ import { findOrCreateAchievementByTitle } from '../helpers'
 
 const levels = [1, 7, 30]
 const link =
-  'https://www.healthline.com/health/fitness-exercise/functional-strength-training#advanced-routine'
+  'https://www.healthline.com/health/fitness-exercise/functional-strength-training'
 
 export const createFunctionalFitnessAchievements = async () => {
+  /* Find or create achievement for exercise */
+  const exerciseAchievement = await findOrCreateAchievementByTitle({
+    title: `Exercise`,
+    type: 'collection',
+    categoryName: 'health',
+    formatName: 'focused',
+    circleName: 'solo',
+    link,
+  })
+
   /* Find or create achievement for functional fitness */
   const parentAchievement = await findOrCreateAchievementByTitle({
     title: `Complete Functional Fitness Exercises`,
@@ -13,6 +23,7 @@ export const createFunctionalFitnessAchievements = async () => {
     formatName: 'focused',
     circleName: 'solo',
     link,
+    parentAchievementId: exerciseAchievement.id,
   })
 
   /* Find or create achievements for workouts */
@@ -23,7 +34,8 @@ export const createFunctionalFitnessAchievements = async () => {
     parentAchievementId: parentAchievement.id,
     formatName: 'focused',
     circleName: 'solo',
-    link,
+    link: `${link}#beginner-routine`,
+    level: 1,
   })
 
   const intermediateAchievement = await findOrCreateAchievementByTitle({
@@ -33,7 +45,8 @@ export const createFunctionalFitnessAchievements = async () => {
     parentAchievementId: parentAchievement.id,
     formatName: 'focused',
     circleName: 'solo',
-    link,
+    link: `${link}#intermediate-routine`,
+    level: 2,
   })
 
   const advancedAchievement = await findOrCreateAchievementByTitle({
@@ -43,7 +56,8 @@ export const createFunctionalFitnessAchievements = async () => {
     parentAchievementId: parentAchievement.id,
     formatName: 'focused',
     circleName: 'solo',
-    link,
+    link: `${link}#advanced-routine`,
+    level: 3,
   })
 
   /* Find or create achievements for levels */
@@ -60,7 +74,7 @@ export const createFunctionalFitnessAchievements = async () => {
         categoryName: 'health',
         formatName: 'focused',
         circleName: 'solo',
-        link,
+        link: `${link}#beginner-routine`,
       })
     )
   )
@@ -77,7 +91,7 @@ export const createFunctionalFitnessAchievements = async () => {
         categoryName: 'health',
         formatName: 'focused',
         circleName: 'solo',
-        link,
+        link: `${link}#intermediate-routine`,
       })
     )
   )
@@ -94,7 +108,7 @@ export const createFunctionalFitnessAchievements = async () => {
         categoryName: 'health',
         formatName: 'focused',
         circleName: 'solo',
-        link,
+        link: `${link}#advanced-routine`,
       })
     )
   )
