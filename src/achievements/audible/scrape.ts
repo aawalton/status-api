@@ -19,11 +19,11 @@ const progressionAuthors = [
   'Noret Flood',
 ]
 
-const favoriteAuthors = ['Brandon Sanderson', 'David Weber']
+// const favoriteAuthors = ['Brandon Sanderson', 'David Weber']
 
-const classicAuthors = ['Isaac Asimov', 'Robert Heinlein', 'Anne McCaffrey']
+// const classicAuthors = ['Isaac Asimov', 'Robert Heinlein', 'Anne McCaffrey']
 
-const authors = [...progressionAuthors, ...favoriteAuthors, ...classicAuthors]
+// const authors = [...progressionAuthors, ...favoriteAuthors, ...classicAuthors]
 
 const getBooksForURL = async (author: string, pageUrl: string) => {
   /* Set up puppeteer */
@@ -135,7 +135,7 @@ const getPagesForAuthor = async (author: string) => {
 }
 
 export const getAudibleAuthors = async () => {
-  for (const author of authors) {
+  for (const author of progressionAuthors) {
     console.log(author)
     await getPagesForAuthor(author)
   }
