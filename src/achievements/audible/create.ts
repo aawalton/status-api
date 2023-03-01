@@ -23,9 +23,8 @@ const parseSeries = (series: string): { name: string; level?: number } => {
 
   const seriesNumberValue = seriesValue?.split(',')[1]?.trim()
   const seriesNumber = seriesNumberValue?.split(' ')[1]?.trim()
-  const seriesInteger = _.isNumber(seriesNumber)
-    ? Math.trunc(_.toNumber(seriesNumber) * 10)
-    : 0
+  const seriesNumberParsed = Math.trunc(_.toNumber(seriesNumber) * 10)
+  const seriesInteger = _.isNaN(seriesNumberParsed) ? 0 : seriesNumberParsed
 
   return { name: seriesName, level: seriesInteger }
 }
@@ -99,9 +98,7 @@ const findOrCreateAchievements = async (
       authorAchievement.id
     )
     await findOrCreateAchievementForBook(book, seriesAchievement.id, level)
-  }
-
-  await findOrCreateAchievementForBook(book, authorAchievement.id)
+  } else await findOrCreateAchievementForBook(book, authorAchievement.id)
 }
 
 export const createAchievements = async () => {
