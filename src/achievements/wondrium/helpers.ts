@@ -20,7 +20,7 @@ export const findOrCreateAchievementForCategory = async (
       throw new Error(
         `achievement not found for ${_.toString(category.achievementId)}`
       )
-    console.log(new Date(), `found achievement for ${category.title}`)
+    console.log(new Date(), `found achievement for ${category.title ?? ''}`)
     return achievement
   }
 
@@ -36,14 +36,14 @@ export const findOrCreateAchievementForCategory = async (
   }
 
   /* Check if there is an achievement that isn't linked */
-  const achievementTitle = `Watch all of Wondrium ${category.title}`
+  const achievementTitle = `Watch all of Wondrium ${category.title ?? ''}`
   const achievement = await database.achievements.findOne({
     where: { link: category.url },
   })
   if (achievement) {
     /* If there is an achievement, link it */
     await category.update({ achievementId: achievement.id })
-    console.log(new Date(), `linked achievement for ${category.title}`)
+    console.log(new Date(), `linked achievement for ${category.title ?? ''}`)
     return achievement
   }
 
@@ -51,13 +51,15 @@ export const findOrCreateAchievementForCategory = async (
   const newAchievement = await database.achievements.create({
     userId,
     categoryName: 'learn',
+    formatName: 'video',
+    circleName: 'solo',
     type: 'collection',
     parentAchievementId: parentAchievement?.id,
     title: achievementTitle,
     link: category.url,
   })
   await category.update({ achievementId: newAchievement.id })
-  console.log(new Date(), `created achievement for ${category.title}`)
+  console.log(new Date(), `created achievement for ${category.title ?? ''}`)
   return newAchievement
 }
 
@@ -112,7 +114,7 @@ export const findOrCreateAchievementsForCourseCategory = async (
   if (achievement) {
     /* If there is an achievement, link it */
     await courseCategory.update({ achievementId: achievement.id })
-    console.log(new Date(), `linked achievement for ${course.title}`)
+    console.log(new Date(), `linked achievement for ${course.title ?? ''}`)
     return achievement
   }
   /* Otherwise, create one */
@@ -120,12 +122,14 @@ export const findOrCreateAchievementsForCourseCategory = async (
     userId,
     categoryName: 'learn',
     type: 'integer',
+    formatName: 'video',
+    circleName: 'solo',
     parentAchievementId: categoryAchievement?.id,
     title: achievementTitle,
     link: course.url,
     target: course.episodes,
   })
   await courseCategory.update({ achievementId: newAchievement.id })
-  console.log(new Date(), `created achievement for ${course.title}`)
+  console.log(new Date(), `created achievement for ${course.title ?? ''}`)
   return newAchievement
 }

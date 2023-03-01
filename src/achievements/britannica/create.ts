@@ -4,7 +4,10 @@
 
 import puppeteer from 'puppeteer'
 
-const topLevelPages = [
+import database from '../../modules/database'
+import { findOrCreateAchievementByTitle } from '../helpers'
+
+const topLevelPageUrls = [
   'https://www.britannica.com/sitemap',
   'https://www.britannica.com/sitemap/a',
   'https://www.britannica.com/sitemap/b',
@@ -60,7 +63,7 @@ const getPageListsForUrl = async (pageUrl: string) => {
   return pageListUrls
 }
 
-const getPagesForUrl = async (pageUrl: string) => {
+const getPageListUrls = async (pageUrl: string) => {
   /* Set up puppeteer */
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
@@ -90,8 +93,61 @@ const getPagesForUrl = async (pageUrl: string) => {
   return pages
 }
 
-export const getBritannicaPages = async () => {
-  const pageListUrls = await getPageListsForUrl(topLevelPages[0])
-  const pages = await getPagesForUrl(pageListUrls[0])
-  console.log(pages)
+export const syncBritannicaAchievements = async () => {
+  const parentAchievement = await findOrCreateAchievementByTitle({
+    title: 'Read the Encyclopedia Britannica',
+    type: 'sequence',
+    categoryName: 'learn',
+    formatName: 'focused',
+    circleName: 'solo',
+    link: topLevelPageUrls[0],
+  })
+  for (const topLevelPageUrl of topLevelPageUrls) {
+    const topLevelSlug =
+      topLevelPageUrl.split('https://www.britannica.com/sitemap/')[1] || '0-9'
+    console.log(topLevelSlug)
+    const topLevelAchievement = await findOrCreateAchievementByTitle({
+      title: `Read the Encyclopedia Britannica ${topLevelSlug}`,
+      type: 'sequence',
+      categoryName: 'learn',
+      formatName: 'focused',
+      circleName: 'solo',
+      link: topLevelPageUrl,
+      parentAchievementId: parentAchievement.id,
+    })
+    const pageListUrls = await getPageListsForUrl(topLevelPageUrl)
+    for (const pageListUrl of pageListUrls) {
+      const pageListSlug = pageListUrl.split(
+        'https://www.britannica.com/sitemap/'
+      )[1]
+      console.log(pageListSlug)
+
+      const pageListAchievement = await findOrCreateAchievementByTitle({
+        title: `Read the Encyclopedia Britannica ${pageListSlug}`,
+        type: 'sequence',
+        categoryName: 'learn',
+        formatName: 'focused',
+        circleName: 'solo',
+        link: pageListUrl,
+        parentAchievementId: topLevelAchievement.id,
+      })
+      const pages = await getPageListUrls(pageListUrl)
+      const pageAchievements = pages.map((page) => ({
+        title: `Read the Encylopedia Britannica article on ${page.title}`,
+        type: 'integer',
+        categoryName: 'learn',
+        formatName: 'focused',
+        circleName: 'solo',
+        target: 1,
+        link: page.url,
+        parentAchievementId: pageListAchievement.id,
+      }))
+      await database.achievements.bulkCreate(pageAchievements, {
+        ignoreDuplicates: true,
+      })
+      await new Promise((resolve) => {
+        setTimeout(resolve, 500)
+      })
+    }
+  }
 }

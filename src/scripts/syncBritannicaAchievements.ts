@@ -1,7 +1,7 @@
-import { getBritannicaPages } from '../achievements/britannica/scrape'
+import { syncBritannicaAchievements } from '../achievements/britannica/create'
 
 const run = async () => {
-  await getBritannicaPages()
+  await syncBritannicaAchievements()
   process.exit(0)
 }
 
