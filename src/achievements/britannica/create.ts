@@ -8,13 +8,13 @@ import database from '../../modules/database'
 import { findOrCreateAchievementByTitle } from '../helpers'
 
 const topLevelPageUrls = [
-  'https://www.britannica.com/sitemap',
-  'https://www.britannica.com/sitemap/a',
-  'https://www.britannica.com/sitemap/b',
-  'https://www.britannica.com/sitemap/c',
-  'https://www.britannica.com/sitemap/d',
-  'https://www.britannica.com/sitemap/e',
-  'https://www.britannica.com/sitemap/f',
+  // 'https://www.britannica.com/sitemap',
+  // 'https://www.britannica.com/sitemap/a',
+  // 'https://www.britannica.com/sitemap/b',
+  // 'https://www.britannica.com/sitemap/c',
+  // 'https://www.britannica.com/sitemap/d',
+  // 'https://www.britannica.com/sitemap/e',
+  // 'https://www.britannica.com/sitemap/f',
   'https://www.britannica.com/sitemap/g',
   'https://www.britannica.com/sitemap/h',
   'https://www.britannica.com/sitemap/i',
