@@ -1,4 +1,4 @@
-import { createExerciseAchievements } from '../achievements/exercise/create'
+import { createExerciseAchievements } from '../achievements/exercise/racquetball'
 
 const run = async () => {
   await createExerciseAchievements()
