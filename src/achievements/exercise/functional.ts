@@ -1,4 +1,4 @@
-import { findOrCreateAchievementByTitle } from '../helpers'
+import { findOrCreateNotionAchievement } from '../helpers'
 
 const levels = [1, 7, 30]
 const link =
@@ -6,108 +6,108 @@ const link =
 
 export const createFunctionalFitnessAchievements = async () => {
   /* Find or create achievement for exercise */
-  const exerciseAchievement = await findOrCreateAchievementByTitle({
+  await findOrCreateNotionAchievement({
     title: `Exercise`,
-    type: 'collection',
-    categoryName: 'health',
-    formatName: 'focused',
-    circleName: 'solo',
+    type: 'Collection',
+    category: 'Health',
+    format: 'Focused',
+    circle: 'Solo',
     link,
   })
 
   /* Find or create achievement for functional fitness */
-  const parentAchievement = await findOrCreateAchievementByTitle({
+  await findOrCreateNotionAchievement({
     title: `Complete Functional Fitness Exercises`,
-    type: 'sequence',
-    categoryName: 'health',
-    formatName: 'focused',
-    circleName: 'solo',
+    type: 'Sequence',
+    category: 'Health',
+    format: 'Focused',
+    circle: 'Solo',
     link,
-    parentAchievementId: exerciseAchievement.id,
+    parentTitle: `Exercise`,
   })
 
   /* Find or create achievements for workouts */
-  const beginnerAchievement = await findOrCreateAchievementByTitle({
+  await findOrCreateNotionAchievement({
     title: `Complete Beginner Functional Fitness Exercises`,
-    type: 'sequence',
-    categoryName: 'health',
-    parentAchievementId: parentAchievement.id,
-    formatName: 'focused',
-    circleName: 'solo',
+    type: 'Sequence',
+    category: 'Health',
+    format: 'Focused',
+    circle: 'Solo',
     link: `${link}#beginner-routine`,
-    level: 1,
+    rank: 1,
+    parentTitle: `Complete Functional Fitness Exercises`,
   })
 
-  const intermediateAchievement = await findOrCreateAchievementByTitle({
+  await findOrCreateNotionAchievement({
     title: `Complete Intermediate Functional Fitness Exercises`,
-    type: 'sequence',
-    categoryName: 'health',
-    parentAchievementId: parentAchievement.id,
-    formatName: 'focused',
-    circleName: 'solo',
+    type: 'Sequence',
+    category: 'Health',
+    format: 'Focused',
+    circle: 'Solo',
     link: `${link}#intermediate-routine`,
-    level: 2,
+    rank: 2,
+    parentTitle: `Complete Functional Fitness Exercises`,
   })
 
-  const advancedAchievement = await findOrCreateAchievementByTitle({
+  await findOrCreateNotionAchievement({
     title: `Complete Advanced Functional Fitness Exercises`,
-    type: 'sequence',
-    categoryName: 'health',
-    parentAchievementId: parentAchievement.id,
-    formatName: 'focused',
-    circleName: 'solo',
+    type: 'Sequence',
+    category: 'Health',
+    format: 'Focused',
+    circle: 'Solo',
     link: `${link}#advanced-routine`,
-    level: 3,
+    rank: 3,
+    parentTitle: `Complete Functional Fitness Exercises`,
   })
 
   /* Find or create achievements for levels */
   await Promise.all(
     levels.map((level) =>
-      findOrCreateAchievementByTitle({
+      findOrCreateNotionAchievement({
         title: `Complete Beginner Functional Fitness Exercises ${level.toLocaleString()} Time${
           level === 1 ? '' : 's'
         }`,
-        type: 'integer',
+        type: 'Integer',
         target: level,
-        level,
-        parentAchievementId: beginnerAchievement.id,
-        categoryName: 'health',
-        formatName: 'focused',
-        circleName: 'solo',
+        rank: level,
+        parentTitle: `Complete Beginner Functional Fitness Exercises`,
+        category: 'Health',
+        format: 'Focused',
+        circle: 'Solo',
         link: `${link}#beginner-routine`,
       })
     )
   )
   await Promise.all(
     levels.map((level) =>
-      findOrCreateAchievementByTitle({
+      findOrCreateNotionAchievement({
         title: `Complete Intermediate Functional Fitness Exercises ${level.toLocaleString()} Time${
           level === 1 ? '' : 's'
         }`,
-        type: 'integer',
+        type: 'Integer',
         target: level,
-        level,
-        parentAchievementId: intermediateAchievement.id,
-        categoryName: 'health',
-        formatName: 'focused',
-        circleName: 'solo',
+        rank: level,
+        parentTitle: `Complete Intermediate Functional Fitness Exercises`,
+        category: 'Health',
+        format: 'Focused',
+        circle: 'Solo',
         link: `${link}#intermediate-routine`,
       })
     )
   )
   await Promise.all(
     levels.map((level) =>
-      findOrCreateAchievementByTitle({
+      findOrCreateNotionAchievement({
         title: `Complete Advanced Functional Fitness Exercises ${level.toLocaleString()} Time${
           level === 1 ? '' : 's'
         }`,
-        type: 'integer',
+        type: 'Integer',
         target: level,
-        level,
-        parentAchievementId: advancedAchievement.id,
-        categoryName: 'health',
-        formatName: 'focused',
-        circleName: 'solo',
+        rank: level,
+        parentTitle: `Complete Advanced Functional Fitness Exercises`,
+        category: 'Health',
+        format: 'Focused',
+        circle: 'Solo',
         link: `${link}#advanced-routine`,
       })
     )

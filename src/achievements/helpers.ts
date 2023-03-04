@@ -53,7 +53,7 @@ const getParentAchievementId = async (
   })
   const parentExists = parentResponse.results.length > 0
   if (achievement.parentTitle && !parentExists)
-    throw new Error('Parent not found')
+    throw new Error(`Parent not found for ${achievement.parentTitle}`)
   return parentResponse.results[0].id
 }
 
@@ -89,6 +89,10 @@ export const findOrCreateNotionAchievement = async (
       Progress: {
         type: 'number',
         number: achievement.progress ?? 0,
+      },
+      Rank: {
+        type: 'number',
+        number: achievement.rank ?? 0,
       },
       Type: {
         type: 'select',
