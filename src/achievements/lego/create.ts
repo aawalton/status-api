@@ -1,4 +1,4 @@
-import { findOrCreateAchievementByTitle } from '../helpers'
+import { findOrCreateNotionAchievement } from '../helpers'
 
 const sets = [
   { name: 'LEGO Art World Map', target: 11695 },
@@ -35,24 +35,26 @@ const sets = [
 
 export const createLegoAchievements = async () => {
   /* Find or create parent achievement */
-  const parentAchievement = await findOrCreateAchievementByTitle({
-    title: 'Complete Top 30 Biggest LEGO Sets',
-    type: 'collection',
-    categoryName: 'fun',
-    formatName: 'focused',
-    circleName: 'solo',
+  const parentTitle = 'Complete The Largest LEGO Sets'
+  await findOrCreateNotionAchievement({
+    title: parentTitle,
+    type: 'Collection',
+    category: 'Fun',
+    format: 'Focused',
+    circle: 'Solo',
   })
 
   await Promise.all(
-    sets.map((set) =>
-      findOrCreateAchievementByTitle({
+    sets.map((set, index) =>
+      findOrCreateNotionAchievement({
         title: `Build ${set.name}`,
-        type: 'integer',
-        categoryName: 'fun',
-        formatName: 'focused',
-        circleName: 'solo',
-        parentAchievementId: parentAchievement.id,
+        type: 'Integer',
+        category: 'Fun',
+        format: 'Focused',
+        circle: 'Solo',
+        parentTitle,
         target: set.target,
+        rank: index,
       })
     )
   )
