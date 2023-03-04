@@ -29,7 +29,7 @@ export const getSubCategories = async () => {
   })
   const url = category?.url
   if (!url) return undefined
-  console.log(new Date(), `loading sub categories for ${category.title}`)
+  console.log(new Date(), `loading sub categories for ${category.title ?? ''}`)
 
   /* Load the page */
   const promises = []
