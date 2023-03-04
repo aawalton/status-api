@@ -24,6 +24,7 @@ export type Achievement =
       link?: string
       rank?: number
       parentTitle?: string
+      parentTitles?: string[]
     }
   | {
       title: string
@@ -36,4 +37,5 @@ export type Achievement =
       link?: string
       rank?: number
       parentTitle?: string
+      parentTitles?: string[]
     }

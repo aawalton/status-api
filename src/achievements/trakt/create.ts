@@ -5,6 +5,7 @@
 import Trakt from 'trakt.tv'
 
 import { achievements } from '../../../generated/tables/achievements'
+import { sleep } from '../../helpers'
 import { findOrCreateAchievementByTitle } from '../helpers'
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
@@ -264,9 +265,7 @@ const createListAchievements = async (
   })
   for (const listItem of listItems.data) {
     await createListItemAchievements(listItem as TraktListItem, listAchievement)
-    await new Promise((resolve) => {
-      setTimeout(resolve, 500)
-    })
+    await sleep(500)
   }
 }
 
@@ -294,8 +293,6 @@ export const createTraktAchievements = async () => {
   /* Find or create achievements for individual lists */
   for (const like of likes.data) {
     await createListAchievements((like as TraktLike).list, parentAchievement)
-    await new Promise((resolve) => {
-      setTimeout(resolve, 500)
-    })
+    await sleep(500)
   }
 }

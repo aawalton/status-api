@@ -1,4 +1,4 @@
-import { createZoneAchievements } from '../achievements/eso/create'
+import { createZoneAchievements } from '../achievements/eso/zones'
 
 const run = async () => {
   await createZoneAchievements()

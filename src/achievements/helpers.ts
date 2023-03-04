@@ -14,22 +14,18 @@ const notion = new Client({
 
 const ACHIEVEMENTS_DATABASE_ID = '06c79efa-24ae-4ff6-a9d2-09bba773934b'
 
-const getParentAchievementId = async (
-  achievement: Achievement
-): Promise<string | null> => {
-  if (!achievement.parentTitle) return null
-
+const getParentAchievementId = async (parentTitle: string): Promise<string> => {
   /* Find the parent achievement */
   const parentResponse = await notion.databases.query({
     database_id: ACHIEVEMENTS_DATABASE_ID,
     filter: {
       property: 'title',
-      rich_text: { equals: achievement.parentTitle },
+      rich_text: { equals: parentTitle },
     },
   })
   const parentExists = parentResponse.results.length > 0
-  if (achievement.parentTitle && !parentExists)
-    throw new Error(`Parent not found for ${achievement.parentTitle}`)
+  if (parentTitle && !parentExists)
+    throw new Error(`Parent not found for ${parentTitle}`)
   return parentResponse.results[0].id
 }
 
@@ -47,8 +43,20 @@ export const findOrCreateNotionAchievement = async (
   const alreadyExists = response.results.length > 0
   if (alreadyExists) return achievement.title
 
-  /* Find the parent achievement */
-  const parentAchievementId = await getParentAchievementId(achievement)
+  /* Find the parent achievements */
+  const parentTitleId = achievement.parentTitle
+    ? await getParentAchievementId(achievement.parentTitle)
+    : null
+  const parentTitlesIds = achievement.parentTitles
+    ? await Promise.all(
+        achievement.parentTitles.map((parentTitle) =>
+          getParentAchievementId(parentTitle)
+        )
+      )
+    : []
+  const parentAchievementIds = parentTitleId
+    ? [parentTitleId, ...parentTitlesIds]
+    : parentTitlesIds
 
   /* If the achievement doesn't exist, add it */
   await notion.pages.create({
@@ -64,7 +72,7 @@ export const findOrCreateNotionAchievement = async (
       },
       Progress: {
         type: 'number',
-        number: _.toNumber(achievement.progress),
+        number: _.toNumber(achievement.progress || 0),
       },
       Rank: {
         type: 'number',
@@ -89,11 +97,11 @@ export const findOrCreateNotionAchievement = async (
       ...(achievement.link
         ? { Link: { type: 'url', url: achievement.link } }
         : {}),
-      ...(parentAchievementId
+      ...(parentAchievementIds
         ? {
             Parent: {
               type: 'relation',
-              relation: [{ id: parentAchievementId }],
+              relation: parentAchievementIds.map((id) => ({ id })),
             },
           }
         : {}),

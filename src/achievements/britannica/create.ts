@@ -4,6 +4,7 @@
 
 import puppeteer from 'puppeteer'
 
+import { sleep } from '../../helpers'
 import database from '../../modules/database'
 import { findOrCreateAchievementByTitle } from '../helpers'
 
@@ -145,9 +146,7 @@ export const syncBritannicaAchievements = async () => {
       await database.achievements.bulkCreate(pageAchievements, {
         ignoreDuplicates: true,
       })
-      await new Promise((resolve) => {
-        setTimeout(resolve, 500)
-      })
+      await sleep(500)
     }
   }
 }
