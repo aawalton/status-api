@@ -114,6 +114,7 @@ export const findOrCreateNotionAchievement = async (
     })
     return achievement.title
   } catch (error) {
+    console.log(error)
     await sleep(1000)
     return findOrCreateNotionAchievement(achievement)
   }
