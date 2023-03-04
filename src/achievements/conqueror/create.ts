@@ -3,9 +3,10 @@ import _ from 'lodash'
 import puppeteer from 'puppeteer'
 
 import database from '../../modules/database'
-import { findOrCreateAchievementByTitle } from '../helpers'
+import { findOrCreateNotionAchievement } from '../helpers'
 
 type ValidChallenge = { title: string; miles: number; url: string }
+const parentTitle = 'Complete All Conqueror Challenges'
 
 const parseDistance = (distance: string) => {
   const imperial = distance.split('/')[0]
@@ -14,19 +15,16 @@ const parseDistance = (distance: string) => {
   return _.toNumber(miles)
 }
 
-const createAchievement = (
-  challenge: ValidChallenge,
-  parentAchievementId: string
-) =>
-  findOrCreateAchievementByTitle({
+const createAchievement = (challenge: ValidChallenge) =>
+  findOrCreateNotionAchievement({
     title: challenge.title,
-    type: 'integer',
-    categoryName: 'health',
-    formatName: 'automatic',
-    circleName: 'solo',
+    type: 'Integer',
+    category: 'Health',
+    format: 'Automatic',
+    circle: 'Solo',
     target: challenge.miles,
     link: challenge.url,
-    parentAchievementId,
+    parentTitle,
   })
 
 export const getChallenges = async () => {
@@ -80,19 +78,17 @@ export const getChallenges = async () => {
   })
 
   /* Find or create the parent achievement */
-  const parentAchievement = await findOrCreateAchievementByTitle({
-    title: 'Complete All Conqueror Challenges',
-    type: 'sequence',
-    categoryName: 'health',
-    formatName: 'automatic',
-    circleName: 'solo',
+  await findOrCreateNotionAchievement({
+    title: parentTitle,
+    type: 'Sequence',
+    category: 'Health',
+    format: 'Automatic',
+    circle: 'Solo',
   })
 
   /* Find or create the child achievements */
   await Promise.all(
-    validChallenges.map((challenge) =>
-      createAchievement(challenge, parentAchievement.id)
-    )
+    validChallenges.map((challenge) => createAchievement(challenge))
   )
 
   /* Shut down puppeteer */
