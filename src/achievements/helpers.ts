@@ -1,6 +1,8 @@
 import { Client } from '@notionhq/client'
 import dotenv from 'dotenv'
+import _ from 'lodash'
 
+import { Achievement } from './types'
 import { achievements } from '../../generated/tables/achievements'
 import database from '../modules/database'
 
@@ -11,32 +13,6 @@ const notion = new Client({
 })
 
 const ACHIEVEMENTS_DATABASE_ID = '06c79efa-24ae-4ff6-a9d2-09bba773934b'
-
-type Achievement =
-  | {
-      title: string
-      target?: number
-      progress?: number
-      type: 'Collection' | 'Sequence'
-      category: 'Faith' | 'Love' | 'Health' | 'Learn' | 'Fun' | 'Wealth'
-      format: 'Audio' | 'Video' | 'Automatic' | 'Focused'
-      circle: 'Solo' | 'Jenny' | 'Group'
-      link?: string
-      rank?: number
-      parentTitle?: string
-    }
-  | {
-      title: string
-      target: number
-      progress?: number
-      type: 'Boolean' | 'Integer'
-      category: 'Faith' | 'Love' | 'Health' | 'Learn' | 'Fun' | 'Wealth'
-      format: 'Audio' | 'Video' | 'Automatic' | 'Focused'
-      circle: 'Solo' | 'Jenny' | 'Group'
-      link?: string
-      rank?: number
-      parentTitle?: string
-    }
 
 const getParentAchievementId = async (
   achievement: Achievement
@@ -84,11 +60,11 @@ export const findOrCreateNotionAchievement = async (
       },
       Target: {
         type: 'number',
-        number: achievement.target ?? 0,
+        number: achievement.type === 'Boolean' ? 1 : achievement.target || 0,
       },
       Progress: {
         type: 'number',
-        number: achievement.progress ?? 0,
+        number: _.toNumber(achievement.progress),
       },
       Rank: {
         type: 'number',
