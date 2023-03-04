@@ -12,7 +12,7 @@ const sharedAttributes = {
   circle: 'Solo',
 } as const
 
-export const createZoneAchievements = async () => {
+export const createSkillLineAchievements = async () => {
   /* Find or create category achievement */
   const categoryTitle = 'Complete Elder Scrolls Online'
   await findOrCreateNotionAchievement({
@@ -85,6 +85,7 @@ export const createZoneAchievements = async () => {
           type: 'Integer',
           target: skillLineLevel.target,
           parentTitle: characterSkillLineTitle,
+          rank: skillLineLevel.level,
           ...sharedAttributes,
         })
         await sleep(500)
