@@ -5,16 +5,16 @@ import _ from 'lodash'
 
 import { audibleBooks } from '../../../generated/tables/audibleBooks'
 import database from '../../modules/database'
-import { findOrCreateAchievementByTitle } from '../helpers'
+import { findOrCreateNotionAchievement } from '../helpers'
 
 const parseDuration = (duration?: string): number => {
   if (!duration) return 1
   const durationValue = duration.split(':')[1].trim()
   const firstValue = _.toNumber(durationValue.split(' ')[0].trim())
   const firstUnits = durationValue.split(' ')[1].trim()
-  if (firstUnits === 'mins') return firstValue
+  if (firstUnits === 'mins') return Math.trunc((firstValue / 60) * 100) / 100
   const minutes = _.toNumber(durationValue.split(' ')[3]?.trim()) || 0
-  return firstValue * 60 + minutes
+  return firstValue + Math.trunc((minutes / 60) * 100) / 100
 }
 
 const parseSeries = (series: string): { name: string; level?: number } => {
@@ -31,74 +31,77 @@ const parseSeries = (series: string): { name: string; level?: number } => {
 
 const findOrCreateAchievementForAuthor = async (
   author: string,
-  parentAchievementId: string
+  parentTitle: string
 ) => {
   const cleanAuthor = author.replace(' ', '+')
   const link = `https://audible.com/search?searchAuthor=${cleanAuthor}&pageSize=50`
 
-  const achievement = await findOrCreateAchievementByTitle({
-    title: `Listen to ${author} Audible Books`,
-    type: 'collection',
-    categoryName: 'fun',
-    formatName: 'audio',
-    circleName: 'solo',
-    parentAchievementId,
+  const title = `Listen to ${author} Audible Books`
+  await findOrCreateNotionAchievement({
+    title,
+    type: 'Collection',
+    category: 'Fun',
+    format: 'Audio',
+    circle: 'Solo',
+    parentTitle,
     link,
   })
-  return achievement
+  return title
 }
 
 const findOrCreateAchievementForSeries = async (
   series: string,
-  parentAchievementId: string
+  parentTitle: string
 ) => {
-  const achievement = await findOrCreateAchievementByTitle({
-    title: `Listen to ${series} Audible Books`,
-    type: 'sequence',
-    categoryName: 'fun',
-    formatName: 'audio',
-    circleName: 'solo',
-    parentAchievementId,
+  const title = `Listen to ${series} Audible Books`
+  await findOrCreateNotionAchievement({
+    title,
+    type: 'Sequence',
+    category: 'Fun',
+    format: 'Audio',
+    circle: 'Solo',
+    parentTitle,
   })
-  return achievement
+  return title
 }
 
 const findOrCreateAchievementForBook = async (
   book: audibleBooks,
-  parentAchievementId: string,
+  parentTitle: string,
   level?: number
 ) => {
-  const achievement = await findOrCreateAchievementByTitle({
-    title: `Listen to ${book.title} by ${book.author}`,
+  const title = `Listen to ${book.title} by ${book.author}`
+  await findOrCreateNotionAchievement({
+    title,
     link: book.url,
-    type: 'integer',
-    categoryName: 'fun',
-    formatName: 'audio',
-    circleName: 'solo',
-    parentAchievementId,
-    level,
+    type: 'Integer',
+    category: 'Fun',
+    format: 'Audio',
+    circle: 'Solo',
+    parentTitle,
+    rank: level,
     target: parseDuration(book.length),
   })
-  return achievement
+  return title
 }
 
 const findOrCreateAchievements = async (
   book: audibleBooks,
   parentAchievementId: string
 ) => {
-  const authorAchievement = await findOrCreateAchievementForAuthor(
+  const authorTitle = await findOrCreateAchievementForAuthor(
     book.author,
     parentAchievementId
   )
 
   if (book.series) {
     const { name, level } = parseSeries(book.series)
-    const seriesAchievement = await findOrCreateAchievementForSeries(
+    const seriesTitle = await findOrCreateAchievementForSeries(
       name,
-      authorAchievement.id
+      authorTitle
     )
-    await findOrCreateAchievementForBook(book, seriesAchievement.id, level)
-  } else await findOrCreateAchievementForBook(book, authorAchievement.id)
+    await findOrCreateAchievementForBook(book, seriesTitle, level)
+  } else await findOrCreateAchievementForBook(book, authorTitle)
 }
 
 export const createAchievements = async () => {
@@ -106,17 +109,18 @@ export const createAchievements = async () => {
   const books = await database.audibleBooks.findAll()
 
   /* Find or create top level achievement */
-  const parentAchievement = await findOrCreateAchievementByTitle({
-    title: 'Listen to Science Fiction and Fantasy Audible Books',
-    type: 'collection',
-    categoryName: 'fun',
-    formatName: 'audio',
-    circleName: 'solo',
+  const title = 'Listen to LitRPG Audible Books'
+  await findOrCreateNotionAchievement({
+    title,
+    type: 'Collection',
+    category: 'Fun',
+    format: 'Audio',
+    circle: 'Solo',
   })
 
   /* Find or create achievements for books */
   for (const book of books) {
     console.log(book.title)
-    await findOrCreateAchievements(book, parentAchievement.id)
+    await findOrCreateAchievements(book, title)
   }
 }

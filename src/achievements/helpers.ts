@@ -59,7 +59,7 @@ const getParentAchievementId = async (
 
 export const findOrCreateNotionAchievement = async (
   achievement: Achievement
-): Promise<void> => {
+): Promise<string> => {
   /* Check if the achievement page already exists */
   const response = await notion.databases.query({
     database_id: ACHIEVEMENTS_DATABASE_ID,
@@ -69,7 +69,7 @@ export const findOrCreateNotionAchievement = async (
     },
   })
   const alreadyExists = response.results.length > 0
-  if (alreadyExists) return
+  if (alreadyExists) return achievement.title
 
   /* Find the parent achievement */
   const parentAchievementId = await getParentAchievementId(achievement)
@@ -123,6 +123,7 @@ export const findOrCreateNotionAchievement = async (
         : {}),
     },
   })
+  return achievement.title
 }
 
 /* Previous function that saves achievements to the database, remove once it's no longer called */
