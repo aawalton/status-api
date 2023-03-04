@@ -1,6 +1,7 @@
-/* eslint-disable no-console */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
+import _ from 'lodash'
+
 import { sleep } from '../../helpers'
 import database from '../../modules/database'
 import { findOrCreateNotionAchievement } from '../helpers'
@@ -21,7 +22,7 @@ export const createZoneAchievements = async () => {
   })
 
   /* Find or create parent achievement */
-  const parentTitle = 'Complete All Zones for All Characters'
+  const parentTitle = 'Complete All Skill Lines for All Characters'
   await findOrCreateNotionAchievement({
     title: parentTitle,
     type: 'Collection',
@@ -31,7 +32,7 @@ export const createZoneAchievements = async () => {
 
   /* Find or create achievements for characters */
   const getCharacterTitle = (characterName: string) =>
-    `Complete All Zones for ${characterName}`
+    `Complete All Skill Lines for ${characterName}`
   const characters = await database.esoCharacters.findAll()
   await Promise.all(
     characters.map((character) =>
@@ -44,14 +45,15 @@ export const createZoneAchievements = async () => {
     )
   )
 
-  /* Find or create achievements for zones */
-  const getZoneTitle = (zoneName: string) =>
-    `Complete Zone ${zoneName} for All Characters`
-  const zones = await database.esoZones.findAll()
+  /* Find or create achievements for skill lines */
+  const getSkillLineTitle = (skillLine: string) =>
+    `Complete ${skillLine} Skill Line for All Characters`
+  const skillLevels = await database.esoSkills.findAll()
+  const skillLines = _.uniq(skillLevels.map((skill) => skill.skillLine))
   await Promise.all(
-    zones.map((zone) =>
+    skillLines.map((skillLine) =>
       findOrCreateNotionAchievement({
-        title: getZoneTitle(zone.name),
+        title: getSkillLineTitle(skillLine),
         type: 'Collection',
         parentTitle,
         ...sharedAttributes,
@@ -59,20 +61,34 @@ export const createZoneAchievements = async () => {
     )
   )
 
-  /* Find or create achievements for characters / zones */
+  /* Find or create achievements for characters / skill lines */
   for (const character of characters) {
-    for (const zone of zones) {
-      const title = `Complete Zone ${zone.name} for ${character.name}`
+    for (const skillLine of skillLines) {
+      const characterSkillLineTitle = `Complete ${skillLine} Skill Line for ${character.name}`
       await findOrCreateNotionAchievement({
-        title,
-        type: 'Boolean',
+        title: characterSkillLineTitle,
+        type: 'Sequence',
         parentTitles: [
-          getZoneTitle(zone.name),
+          getSkillLineTitle(skillLine),
           getCharacterTitle(character.name),
         ],
         ...sharedAttributes,
       })
       await sleep(500)
+      const skillLineLevels = await database.esoSkills.findAll({
+        where: { skillLine },
+      })
+      for (const skillLineLevel of skillLineLevels) {
+        const skillLineLevelTitle = `Complete ${skillLineLevel.skillLine} Level ${skillLineLevel.level} for ${character.name} `
+        await findOrCreateNotionAchievement({
+          title: skillLineLevelTitle,
+          type: 'Integer',
+          target: skillLineLevel.target,
+          parentTitle: characterSkillLineTitle,
+          ...sharedAttributes,
+        })
+        await sleep(500)
+      }
     }
   }
 }

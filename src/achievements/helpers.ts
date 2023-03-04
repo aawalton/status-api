@@ -1,9 +1,11 @@
+/* eslint-disable no-console */
 import { Client } from '@notionhq/client'
 import dotenv from 'dotenv'
 import _ from 'lodash'
 
 import { Achievement } from './types'
 import { achievements } from '../../generated/tables/achievements'
+import { sleep } from '../helpers'
 import database from '../modules/database'
 
 dotenv.config()
@@ -32,82 +34,89 @@ const getParentAchievementId = async (parentTitle: string): Promise<string> => {
 export const findOrCreateNotionAchievement = async (
   achievement: Achievement
 ): Promise<string> => {
-  /* Check if the achievement page already exists */
-  const response = await notion.databases.query({
-    database_id: ACHIEVEMENTS_DATABASE_ID,
-    filter: {
-      property: 'title',
-      rich_text: { equals: achievement.title },
-    },
-  })
-  const alreadyExists = response.results.length > 0
-  if (alreadyExists) return achievement.title
+  try {
+    console.log(achievement.title)
 
-  /* Find the parent achievements */
-  const parentTitleId = achievement.parentTitle
-    ? await getParentAchievementId(achievement.parentTitle)
-    : null
-  const parentTitlesIds = achievement.parentTitles
-    ? await Promise.all(
-        achievement.parentTitles.map((parentTitle) =>
-          getParentAchievementId(parentTitle)
+    /* Check if the achievement page already exists */
+    const response = await notion.databases.query({
+      database_id: ACHIEVEMENTS_DATABASE_ID,
+      filter: {
+        property: 'title',
+        rich_text: { equals: achievement.title },
+      },
+    })
+    const alreadyExists = response.results.length > 0
+    if (alreadyExists) return achievement.title
+
+    /* Find the parent achievements */
+    const parentTitleId = achievement.parentTitle
+      ? await getParentAchievementId(achievement.parentTitle)
+      : null
+    const parentTitlesIds = achievement.parentTitles
+      ? await Promise.all(
+          achievement.parentTitles.map((parentTitle) =>
+            getParentAchievementId(parentTitle)
+          )
         )
-      )
-    : []
-  const parentAchievementIds = parentTitleId
-    ? [parentTitleId, ...parentTitlesIds]
-    : parentTitlesIds
+      : []
+    const parentAchievementIds = parentTitleId
+      ? [parentTitleId, ...parentTitlesIds]
+      : parentTitlesIds
 
-  /* If the achievement doesn't exist, add it */
-  await notion.pages.create({
-    parent: { database_id: ACHIEVEMENTS_DATABASE_ID },
-    properties: {
-      Name: {
-        type: 'title',
-        title: [{ type: 'text', text: { content: achievement.title } }],
+    /* If the achievement doesn't exist, add it */
+    await notion.pages.create({
+      parent: { database_id: ACHIEVEMENTS_DATABASE_ID },
+      properties: {
+        Name: {
+          type: 'title',
+          title: [{ type: 'text', text: { content: achievement.title } }],
+        },
+        Target: {
+          type: 'number',
+          number: achievement.type === 'Boolean' ? 1 : achievement.target || 0,
+        },
+        Progress: {
+          type: 'number',
+          number: _.toNumber(achievement.progress || 0),
+        },
+        Rank: {
+          type: 'number',
+          number: achievement.rank ?? 0,
+        },
+        Type: {
+          type: 'select',
+          select: { name: achievement.type },
+        },
+        Category: {
+          type: 'select',
+          select: { name: achievement.category },
+        },
+        Format: {
+          type: 'select',
+          select: { name: achievement.format },
+        },
+        Circle: {
+          type: 'select',
+          select: { name: achievement.circle },
+        },
+        ...(achievement.link
+          ? { Link: { type: 'url', url: achievement.link } }
+          : {}),
+        ...(parentAchievementIds
+          ? {
+              Parent: {
+                type: 'relation',
+                relation: parentAchievementIds.map((id) => ({ id })),
+              },
+            }
+          : {}),
       },
-      Target: {
-        type: 'number',
-        number: achievement.type === 'Boolean' ? 1 : achievement.target || 0,
-      },
-      Progress: {
-        type: 'number',
-        number: _.toNumber(achievement.progress || 0),
-      },
-      Rank: {
-        type: 'number',
-        number: achievement.rank ?? 0,
-      },
-      Type: {
-        type: 'select',
-        select: { name: achievement.type },
-      },
-      Category: {
-        type: 'select',
-        select: { name: achievement.category },
-      },
-      Format: {
-        type: 'select',
-        select: { name: achievement.format },
-      },
-      Circle: {
-        type: 'select',
-        select: { name: achievement.circle },
-      },
-      ...(achievement.link
-        ? { Link: { type: 'url', url: achievement.link } }
-        : {}),
-      ...(parentAchievementIds
-        ? {
-            Parent: {
-              type: 'relation',
-              relation: parentAchievementIds.map((id) => ({ id })),
-            },
-          }
-        : {}),
-    },
-  })
-  return achievement.title
+    })
+    return achievement.title
+  } catch (error) {
+    await sleep(1000)
+    return findOrCreateNotionAchievement(achievement)
+  }
 }
 
 /* Previous function that saves achievements to the database, remove once it's no longer called */
