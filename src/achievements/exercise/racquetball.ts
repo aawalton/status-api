@@ -2,7 +2,7 @@ import { findOrCreateNotionAchievement } from '../helpers'
 
 const levels = [10, 100, 1000, 10000, 100000, 1000000]
 
-export const createExerciseAchievements = async () => {
+export const createRacquetballAchievements = async () => {
   /* Find or create achievements for categories */
   await findOrCreateNotionAchievement({
     title: 'Play Racquetball',
