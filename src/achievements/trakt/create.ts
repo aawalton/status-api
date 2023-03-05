@@ -2,16 +2,16 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-console */
-import Trakt from 'trakt.tv'
-
-import { achievements } from '../../../generated/tables/achievements'
-import { sleep } from '../../helpers'
-import { findOrCreateAchievementByTitle } from '../helpers'
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
+import Trakt from 'trakt.tv'
+
+import { sleep } from '../../helpers'
+import { findOrCreateNotionAchievement } from '../helpers'
 
 const options = {
   client_id: '74eaed60ad7e3ce83c68c0a56f8e5769219103f883190e06fe3e9ea1be7d162f',
@@ -100,43 +100,43 @@ type TraktLike = { list: TraktList }
 
 const createMovieAchievements = async (
   movie: TraktMovie,
-  parentAchievement: achievements,
+  parentTitle: string,
   level?: number
 ) => {
   /* Find or create achievement for the movie */
-  const movieAchievement = await findOrCreateAchievementByTitle({
+  const movieTitle = await findOrCreateNotionAchievement({
     title: `Watch ${movie.title} Movie`,
-    type: 'boolean',
-    categoryName: 'fun',
-    formatName: 'video',
-    circleName: 'solo',
-    parentAchievementId: parentAchievement.id,
+    type: 'Boolean',
+    category: 'Fun',
+    format: 'Video',
+    circle: 'Solo',
+    parentTitle,
     link: `https://trakt.tv/movies/${movie.ids.slug}`,
-    level,
+    rank: level,
     target: 1,
   })
-  console.log(movieAchievement.title)
+  console.log(movieTitle)
 }
 
 const createEpisodeAchievements = async (
   show: TraktShow,
   episode: TraktEpisode,
-  parentAchievement: achievements,
+  parentTitle: string,
   level?: number
 ) => {
   /* Find or create achievement for the episode */
-  const episodeAchievement = await findOrCreateAchievementByTitle({
+  const episodeTitle = await findOrCreateNotionAchievement({
     title: `Watch ${show.title} Season ${episode.season} Episode ${episode.number}`,
-    type: 'boolean',
-    categoryName: 'fun',
-    formatName: 'video',
-    circleName: 'solo',
-    parentAchievementId: parentAchievement.id,
+    type: 'Boolean',
+    category: 'Fun',
+    format: 'Video',
+    circle: 'Solo',
+    parentTitle,
     link: `https://trakt.tv/shows/${show.ids.slug}/seasons/${episode.season}/episodes/${episode.number}`,
-    level: level ?? episode.number,
+    rank: level ?? episode.number,
     target: 1,
   })
-  console.log(episodeAchievement.title)
+  console.log(episodeTitle)
 }
 
 const range = (start: number, end: number, length = end - start) =>
@@ -145,52 +145,51 @@ const range = (start: number, end: number, length = end - start) =>
 const createSeasonAchievements = async (
   show: TraktShow,
   season: TraktSeason,
-  parentAchievement: achievements,
+  parentTitle: string,
   level?: number
 ) => {
   /* Find or create achievement for the season */
-  const seasonAchievement = await findOrCreateAchievementByTitle({
+  const seasonTitle = await findOrCreateNotionAchievement({
     title: `Watch ${show.title} Season ${season.number}`,
-    type: 'sequence',
-    categoryName: 'fun',
-    formatName: 'video',
-    circleName: 'solo',
-    parentAchievementId: parentAchievement.id,
+    type: 'Sequence',
+    category: 'Fun',
+    format: 'Video',
+    circle: 'Solo',
+    parentTitle,
     link: `https://trakt.tv/shows/${show.ids.slug}/seasons/${season.number}`,
-    level: level ?? season.number,
+    rank: level ?? season.number,
   })
-  console.log(seasonAchievement.title)
+  console.log(seasonTitle)
 
   /* Find or create achievements for the episodes */
   const episodes = range(1, season.episode_count)
-  await Promise.all(
-    episodes.map((episodeNumber) =>
-      createEpisodeAchievements(
-        show,
-        { season: season.number, number: episodeNumber },
-        seasonAchievement
-      )
+  for (const episodeNumber of episodes) {
+    await createEpisodeAchievements(
+      show,
+      { season: season.number, number: episodeNumber },
+      seasonTitle
     )
-  )
+    await sleep(500)
+  }
 }
 
 const createShowAchievements = async (
   show: TraktShow,
-  parentAchievement: achievements,
+  parentTitle: string,
   level?: number
 ) => {
   /* Find or create achievement for the show */
-  const showAchievement = await findOrCreateAchievementByTitle({
+  const showTitle = await findOrCreateNotionAchievement({
     title: `Watch ${show.title}`,
-    type: 'sequence',
-    categoryName: 'fun',
-    formatName: 'video',
-    circleName: 'solo',
-    parentAchievementId: parentAchievement.id,
+    type: 'Sequence',
+    category: 'Fun',
+    format: 'Video',
+    circle: 'Solo',
+    parentTitle,
     link: `https://trakt.tv/shows/${show.ids.slug}`,
-    level,
+    rank: level,
   })
-  console.log(showAchievement.title)
+  console.log(showTitle)
 
   /* Find or create achievements for the seasons and episodes */
   const summary = await trakt.seasons.summary({
@@ -198,63 +197,51 @@ const createShowAchievements = async (
     extended: 'full',
   })
   const seasons = summary.data
-  await Promise.all(
-    seasons.map((season: TraktSeason) =>
-      createSeasonAchievements(show, season, showAchievement)
-    )
-  )
+  for (const season of seasons) {
+    await createSeasonAchievements(show, season, showTitle)
+    await sleep(500)
+  }
 }
 
 const createListItemAchievements = (
   listItem: TraktListItem,
-  parentAchievement: achievements
+  parentTitle: string
 ) => {
   const { type } = listItem
   if (type === 'movie')
-    return createMovieAchievements(
-      listItem.movie,
-      parentAchievement,
-      listItem.rank
-    )
+    return createMovieAchievements(listItem.movie, parentTitle, listItem.rank)
   if (type === 'show')
-    return createShowAchievements(
-      listItem.show,
-      parentAchievement,
-      listItem.rank
-    )
+    return createShowAchievements(listItem.show, parentTitle, listItem.rank)
   if (type === 'season')
     return createSeasonAchievements(
       listItem.show,
       listItem.season,
-      parentAchievement,
+      parentTitle,
       listItem.rank
     )
   if (type === 'episode')
     return createEpisodeAchievements(
       listItem.show,
       listItem.episode,
-      parentAchievement,
+      parentTitle,
       listItem.rank
     )
   return undefined
 }
 
-const createListAchievements = async (
-  list: TraktList,
-  parentAchievement: achievements
-) => {
+const createListAchievements = async (list: TraktList, parentTitle: string) => {
   /* Find or create achievement for the list */
   if (!list.name) return
-  const listAchievement = await findOrCreateAchievementByTitle({
+  const listTitle = await findOrCreateNotionAchievement({
     title: `Complete ${list.name}`,
-    type: 'sequence',
-    categoryName: 'fun',
-    formatName: 'video',
-    circleName: 'solo',
-    parentAchievementId: parentAchievement.id,
+    type: 'Sequence',
+    category: 'Fun',
+    format: 'Video',
+    circle: 'Solo',
+    parentTitle,
     link: `https://trakt.tv/users/${list.user.ids.slug}/lists/${list.ids.slug}`,
   })
-  console.log(listAchievement.title)
+  console.log(listTitle)
 
   /* Find or create achievements for the list items */
   const listItems = await trakt.users.list.items.get({
@@ -264,7 +251,7 @@ const createListAchievements = async (
     extended: 'full',
   })
   for (const listItem of listItems.data) {
-    await createListItemAchievements(listItem as TraktListItem, listAchievement)
+    await createListItemAchievements(listItem as TraktListItem, listTitle)
     await sleep(500)
   }
 }
@@ -280,19 +267,19 @@ export const createTraktAchievements = async () => {
   })
 
   /* Find or create parent achievement */
-  const parentAchievement = await findOrCreateAchievementByTitle({
+  const parentTitle = await findOrCreateNotionAchievement({
     title: 'Complete Trakt Lists',
-    type: 'collection',
-    categoryName: 'fun',
-    formatName: 'video',
-    circleName: 'solo',
+    type: 'Collection',
+    category: 'Fun',
+    format: 'Video',
+    circle: 'Solo',
     link: 'https://trakt.tv/users/aawalton/lists/liked',
   })
-  console.log(parentAchievement.title)
+  console.log(parentTitle)
 
   /* Find or create achievements for individual lists */
   for (const like of likes.data) {
-    await createListAchievements((like as TraktLike).list, parentAchievement)
+    await createListAchievements((like as TraktLike).list, parentTitle)
     await sleep(500)
   }
 }
