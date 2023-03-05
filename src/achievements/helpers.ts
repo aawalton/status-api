@@ -111,6 +111,7 @@ export const findOrCreateNotionAchievement = async (
             }
           : {}),
       },
+      children: achievement.children,
     })
     return achievement.title
   } catch (error) {

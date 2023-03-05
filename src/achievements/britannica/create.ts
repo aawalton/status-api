@@ -5,17 +5,16 @@
 import puppeteer from 'puppeteer'
 
 import { sleep } from '../../helpers'
-import database from '../../modules/database'
-import { findOrCreateAchievementByTitle } from '../helpers'
+import { findOrCreateNotionAchievement } from '../helpers'
 
 const topLevelPageUrls = [
-  // 'https://www.britannica.com/sitemap',
-  // 'https://www.britannica.com/sitemap/a',
-  // 'https://www.britannica.com/sitemap/b',
-  // 'https://www.britannica.com/sitemap/c',
-  // 'https://www.britannica.com/sitemap/d',
-  // 'https://www.britannica.com/sitemap/e',
-  // 'https://www.britannica.com/sitemap/f',
+  'https://www.britannica.com/sitemap',
+  'https://www.britannica.com/sitemap/a',
+  'https://www.britannica.com/sitemap/b',
+  'https://www.britannica.com/sitemap/c',
+  'https://www.britannica.com/sitemap/d',
+  'https://www.britannica.com/sitemap/e',
+  'https://www.britannica.com/sitemap/f',
   'https://www.britannica.com/sitemap/g',
   'https://www.britannica.com/sitemap/h',
   'https://www.britannica.com/sitemap/i',
@@ -38,114 +37,134 @@ const topLevelPageUrls = [
   'https://www.britannica.com/sitemap/z',
 ]
 
-const getPageListsForUrl = async (pageUrl: string) => {
-  /* Set up puppeteer */
-  const browser = await puppeteer.launch()
-  const page = await browser.newPage()
-  const timeout = 300000
-  page.setDefaultTimeout(timeout)
+const getPageListsForUrl = async (pageUrl: string): Promise<string[]> => {
+  try {
+    /* Set up puppeteer */
+    const browser = await puppeteer.launch()
+    const page = await browser.newPage()
+    const timeout = 300000
+    page.setDefaultTimeout(timeout)
 
-  /* Load the page */
-  const promises = []
-  promises.push(page.waitForNavigation())
-  await page.goto(pageUrl)
-  await Promise.all(promises)
+    /* Load the page */
+    const promises = []
+    promises.push(page.waitForNavigation())
+    await page.goto(pageUrl)
+    await Promise.all(promises)
 
-  /* Find the page lists */
-  const pageListUrls = await page.$$eval(
-    'ul.md-az-browse-content > li > a',
-    (as) => as.map((s) => s.href)
-  )
+    /* Find the page lists */
+    const pageListUrls = await page.$$eval(
+      'ul.md-az-browse-content > li > a',
+      (as) => as.map((s) => s.href)
+    )
 
-  /* Shut down puppeteer */
-  await browser.close()
+    /* Shut down puppeteer */
+    await browser.close()
 
-  /* Return the page lists */
-  return pageListUrls
+    /* Return the page lists */
+    return pageListUrls
+  } catch (error) {
+    await sleep(500)
+    return getPageListsForUrl(pageUrl)
+  }
 }
 
-const getPageListUrls = async (pageUrl: string) => {
-  /* Set up puppeteer */
-  const browser = await puppeteer.launch()
-  const page = await browser.newPage()
-  const timeout = 300000
-  page.setDefaultTimeout(timeout)
+const getPageListUrls = async (
+  pageUrl: string
+): Promise<{ title: string; url: string }[]> => {
+  try {
+    /* Set up puppeteer */
+    const browser = await puppeteer.launch()
+    const page = await browser.newPage()
+    const timeout = 300000
+    page.setDefaultTimeout(timeout)
 
-  /* Load the page */
-  const promises = []
-  promises.push(page.waitForNavigation())
-  await page.goto(pageUrl)
-  await Promise.all(promises)
+    /* Load the page */
+    const promises = []
+    promises.push(page.waitForNavigation())
+    await page.goto(pageUrl)
+    await Promise.all(promises)
 
-  /* Find the pages */
-  const pageElements = await page.$$('ul.md-az-browse-content > li')
-  const pages = await Promise.all(
-    pageElements.map(async (pageElement) => {
-      const url = await pageElement.$eval('a', (s) => s.href)
-      const title = (await pageElement.$eval('a', (s) => s.textContent)) ?? ''
-      return { title, url }
-    })
-  )
+    /* Find the pages */
+    const pageElements = await page.$$('ul.md-az-browse-content > li')
+    const pages = await Promise.all(
+      pageElements.map(async (pageElement) => {
+        const url = await pageElement.$eval('a', (s) => s.href)
+        const title = (await pageElement.$eval('a', (s) => s.textContent)) ?? ''
+        return { title, url }
+      })
+    )
 
-  /* Shut down puppeteer */
-  await browser.close()
+    /* Shut down puppeteer */
+    await browser.close()
 
-  /* Return the page lists */
-  return pages
+    /* Return the page lists */
+    return pages
+  } catch (error) {
+    await sleep(500)
+    return getPageListUrls(pageUrl)
+  }
 }
 
 export const syncBritannicaAchievements = async () => {
-  const parentAchievement = await findOrCreateAchievementByTitle({
+  const parentTitle = await findOrCreateNotionAchievement({
     title: 'Read the Encyclopedia Britannica',
-    type: 'sequence',
-    categoryName: 'learn',
-    formatName: 'focused',
-    circleName: 'solo',
+    type: 'Sequence',
+    category: 'Learn',
+    format: 'Focused',
+    circle: 'Solo',
     link: topLevelPageUrls[0],
   })
-  for (const topLevelPageUrl of topLevelPageUrls) {
+  for (const [topLevelIndex, topLevelPageUrl] of topLevelPageUrls.entries()) {
     const topLevelSlug =
       topLevelPageUrl.split('https://www.britannica.com/sitemap/')[1] || '0-9'
     console.log(topLevelSlug)
-    const topLevelAchievement = await findOrCreateAchievementByTitle({
+    const topLevelTitle = await findOrCreateNotionAchievement({
       title: `Read the Encyclopedia Britannica ${topLevelSlug}`,
-      type: 'sequence',
-      categoryName: 'learn',
-      formatName: 'focused',
-      circleName: 'solo',
+      type: 'Sequence',
+      category: 'Learn',
+      format: 'Focused',
+      circle: 'Solo',
       link: topLevelPageUrl,
-      parentAchievementId: parentAchievement.id,
+      parentTitle,
+      rank: topLevelIndex,
     })
     const pageListUrls = await getPageListsForUrl(topLevelPageUrl)
-    for (const pageListUrl of pageListUrls) {
+    for (const [pageListIndex, pageListUrl] of pageListUrls.entries()) {
       const pageListSlug = pageListUrl.split(
         'https://www.britannica.com/sitemap/'
       )[1]
       console.log(pageListSlug)
 
-      const pageListAchievement = await findOrCreateAchievementByTitle({
-        title: `Read the Encyclopedia Britannica ${pageListSlug}`,
-        type: 'sequence',
-        categoryName: 'learn',
-        formatName: 'focused',
-        circleName: 'solo',
-        link: pageListUrl,
-        parentAchievementId: topLevelAchievement.id,
-      })
+      const pageListTitle = `Read the Encyclopedia Britannica ${pageListSlug}`
       const pages = await getPageListUrls(pageListUrl)
       const pageAchievements = pages.map((page) => ({
-        title: `Read the Encylopedia Britannica article on ${page.title}`,
-        type: 'integer',
-        categoryName: 'learn',
-        formatName: 'focused',
-        circleName: 'solo',
-        target: 1,
-        link: page.url,
-        parentAchievementId: pageListAchievement.id,
+        type: 'to_do' as const,
+        to_do: {
+          rich_text: [
+            {
+              type: 'text' as const,
+              text: {
+                content: page.title,
+                link: { url: page.url },
+              },
+            },
+          ],
+          checked: false,
+        },
       }))
-      await database.achievements.bulkCreate(pageAchievements, {
-        ignoreDuplicates: true,
+
+      await findOrCreateNotionAchievement({
+        title: pageListTitle,
+        type: 'Sequence',
+        category: 'Learn',
+        format: 'Focused',
+        circle: 'Solo',
+        link: pageListUrl,
+        parentTitle: topLevelTitle,
+        rank: pageListIndex,
+        children: pageAchievements,
       })
+
       await sleep(500)
     }
   }

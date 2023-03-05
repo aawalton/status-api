@@ -1,3 +1,5 @@
+import { BlockObjectRequest } from '@notionhq/client/build/src/api-endpoints'
+
 export type AchievementType = 'Collection' | 'Sequence' | 'Boolean' | 'Integer'
 
 export type AchievementCategory =
@@ -25,6 +27,7 @@ export type Achievement =
       rank?: number
       parentTitle?: string
       parentTitles?: string[]
+      children?: Array<BlockObjectRequest>
     }
   | {
       title: string
@@ -38,4 +41,5 @@ export type Achievement =
       rank?: number
       parentTitle?: string
       parentTitles?: string[]
+      children?: Array<BlockObjectRequest>
     }
