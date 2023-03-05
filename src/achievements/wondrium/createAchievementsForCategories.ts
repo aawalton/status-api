@@ -47,7 +47,9 @@ export const createAchievementsForCategories = async (): Promise<void> => {
       where: { parentCategoryId: secondLevelCategory.id },
     })
     for (const thirdLevelCategory of thirdLevelCategories) {
-      const thirdLevelTitle = `Watch Wondrium ${thirdLevelCategory.title ?? ''}`
+      const thirdLevelTitle = `Watch Wondrium ${
+        secondLevelCategory.title ?? ''
+      } > ${thirdLevelCategory.title ?? ''}`
       await findOrCreateNotionAchievement({
         title: thirdLevelTitle,
         link: topLevelCategory.url,

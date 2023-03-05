@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-import { sleep } from '../../helpers'
+
 import database from '../../modules/database'
 import { findOrCreateNotionAchievement } from '../helpers'
 
@@ -8,7 +8,7 @@ const sharedAttributes = {
   category: 'Learn',
   format: 'Video',
   circle: 'Solo',
-  type: 'Collection',
+  type: 'Integer',
 } as const
 
 export const createAchievementsForCourses = async () => {
@@ -34,7 +34,7 @@ export const createAchievementsForCourses = async () => {
       link: course.url,
       ...sharedAttributes,
       parentTitles,
+      target: course.episodes ?? 1,
     })
-    await sleep(500)
   }
 }
