@@ -9,6 +9,7 @@ const sharedAttributes = {
   category: 'Fun',
   format: 'Automatic',
   circle: 'Solo',
+  tags: ['Elder Scrolls Online'],
 } as const
 
 export const createZoneAchievements = async () => {
