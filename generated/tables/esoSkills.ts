@@ -4,11 +4,11 @@ import { DataTypes, Model, Optional } from 'sequelize';
 export interface esoSkillsAttributes {
   id: string;
   skillLine: string;
-  level: number;
   target: number;
   createdAt: Date;
   updatedAt: Date;
   deletedAt?: Date;
+  rank: number;
 }
 
 export type esoSkillsPk = "id";
@@ -19,11 +19,11 @@ export type esoSkillsCreationAttributes = Optional<esoSkillsAttributes, esoSkill
 export class esoSkills extends Model<esoSkillsAttributes, esoSkillsCreationAttributes> implements esoSkillsAttributes {
   id!: string;
   skillLine!: string;
-  level!: number;
   target!: number;
   createdAt!: Date;
   updatedAt!: Date;
   deletedAt?: Date;
+  rank!: number;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof esoSkills {
@@ -38,10 +38,6 @@ export class esoSkills extends Model<esoSkillsAttributes, esoSkillsCreationAttri
       type: DataTypes.TEXT,
       allowNull: false,
       field: 'skill_line'
-    },
-    level: {
-      type: DataTypes.INTEGER,
-      allowNull: false
     },
     target: {
       type: DataTypes.INTEGER,
@@ -63,6 +59,10 @@ export class esoSkills extends Model<esoSkillsAttributes, esoSkillsCreationAttri
       type: DataTypes.DATE,
       allowNull: true,
       field: 'deleted_at'
+    },
+    rank: {
+      type: DataTypes.DECIMAL,
+      allowNull: false
     }
   }, {
     sequelize,
@@ -77,14 +77,6 @@ export class esoSkills extends Model<esoSkillsAttributes, esoSkillsCreationAttri
         unique: true,
         fields: [
           { name: "id" },
-        ]
-      },
-      {
-        name: "eso_skills_skill_line_level_idx",
-        unique: true,
-        fields: [
-          { name: "skill_line" },
-          { name: "level" },
         ]
       },
     ]

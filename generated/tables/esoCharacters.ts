@@ -7,6 +7,7 @@ export interface esoCharactersAttributes {
   createdAt: Date;
   updatedAt: Date;
   deletedAt?: Date;
+  rank: number;
 }
 
 export type esoCharactersPk = "id";
@@ -20,6 +21,7 @@ export class esoCharacters extends Model<esoCharactersAttributes, esoCharactersC
   createdAt!: Date;
   updatedAt!: Date;
   deletedAt?: Date;
+  rank!: number;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof esoCharacters {
@@ -50,6 +52,10 @@ export class esoCharacters extends Model<esoCharactersAttributes, esoCharactersC
       type: DataTypes.DATE,
       allowNull: true,
       field: 'deleted_at'
+    },
+    rank: {
+      type: DataTypes.DECIMAL,
+      allowNull: false
     }
   }, {
     sequelize,

@@ -40,6 +40,7 @@ export const createSkillLineAchievements = async () => {
         title: getCharacterTitle(character.name),
         type: 'Collection',
         parentTitle,
+        rank: character.rank,
         ...sharedAttributes,
       })
     )
@@ -55,6 +56,7 @@ export const createSkillLineAchievements = async () => {
         title: getSkillLineTitle(skill.skillLine),
         type: 'Collection',
         parentTitle,
+        rank: skill.rank,
         ...sharedAttributes,
       })
     )
@@ -72,6 +74,7 @@ export const createSkillLineAchievements = async () => {
           getCharacterTitle(character.name),
         ],
         target: skill.target,
+        rank: skill.rank + character.rank,
         ...sharedAttributes,
       })
       await sleep(500)

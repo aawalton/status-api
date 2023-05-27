@@ -97,6 +97,14 @@ export class audibleBooks extends Model<audibleBooksAttributes, audibleBooksCrea
     underscored: true,
     indexes: [
       {
+        name: "audible_books_author_title_idx",
+        unique: true,
+        fields: [
+          { name: "author" },
+          { name: "title" },
+        ]
+      },
+      {
         name: "audible_books_pkey",
         unique: true,
         fields: [

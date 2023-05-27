@@ -25,6 +25,10 @@ import { esoZones as _esoZones } from "./esoZones";
 import type { esoZonesAttributes, esoZonesCreationAttributes } from "./esoZones";
 import { exercises as _exercises } from "./exercises";
 import type { exercisesAttributes, exercisesCreationAttributes } from "./exercises";
+import { oldAchievements as _oldAchievements } from "./oldAchievements";
+import type { oldAchievementsAttributes, oldAchievementsCreationAttributes } from "./oldAchievements";
+import { oldAudibleBooks as _oldAudibleBooks } from "./oldAudibleBooks";
+import type { oldAudibleBooksAttributes, oldAudibleBooksCreationAttributes } from "./oldAudibleBooks";
 import { profiles as _profiles } from "./profiles";
 import type { profilesAttributes, profilesCreationAttributes } from "./profiles";
 import { wondriumCategories as _wondriumCategories } from "./wondriumCategories";
@@ -48,6 +52,8 @@ export {
   _esoSkills as esoSkills,
   _esoZones as esoZones,
   _exercises as exercises,
+  _oldAchievements as oldAchievements,
+  _oldAudibleBooks as oldAudibleBooks,
   _profiles as profiles,
   _wondriumCategories as wondriumCategories,
   _wondriumCourseCategories as wondriumCourseCategories,
@@ -81,6 +87,10 @@ export type {
   esoZonesCreationAttributes,
   exercisesAttributes,
   exercisesCreationAttributes,
+  oldAchievementsAttributes,
+  oldAchievementsCreationAttributes,
+  oldAudibleBooksAttributes,
+  oldAudibleBooksCreationAttributes,
   profilesAttributes,
   profilesCreationAttributes,
   wondriumCategoriesAttributes,
@@ -105,6 +115,8 @@ export function initModels(sequelize: Sequelize) {
   const esoSkills = _esoSkills.initModel(sequelize);
   const esoZones = _esoZones.initModel(sequelize);
   const exercises = _exercises.initModel(sequelize);
+  const oldAchievements = _oldAchievements.initModel(sequelize);
+  const oldAudibleBooks = _oldAudibleBooks.initModel(sequelize);
   const profiles = _profiles.initModel(sequelize);
   const wondriumCategories = _wondriumCategories.initModel(sequelize);
   const wondriumCourseCategories = _wondriumCourseCategories.initModel(sequelize);
@@ -135,6 +147,8 @@ export function initModels(sequelize: Sequelize) {
     esoSkills: esoSkills,
     esoZones: esoZones,
     exercises: exercises,
+    oldAchievements: oldAchievements,
+    oldAudibleBooks: oldAudibleBooks,
     profiles: profiles,
     wondriumCategories: wondriumCategories,
     wondriumCourseCategories: wondriumCourseCategories,
