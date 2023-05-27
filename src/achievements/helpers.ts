@@ -99,6 +99,10 @@ export const findOrCreateNotionAchievement = async (
           type: 'select',
           select: { name: achievement.circle },
         },
+        Tags: {
+          type: 'multi_select',
+          multi_select: achievement.tags?.map((tag) => ({ name: tag })) ?? [],
+        },
         ...(achievement.link
           ? { Link: { type: 'url', url: achievement.link } }
           : {}),
