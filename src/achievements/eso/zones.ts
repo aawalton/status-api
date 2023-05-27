@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
+import { toNumber } from 'lodash'
+
 import { sleep } from '../../helpers'
 import database from '../../modules/database'
 import { findOrCreateNotionAchievement } from '../helpers'
@@ -73,7 +75,7 @@ export const createZoneAchievements = async () => {
           getZoneTitle(zone.name),
           getCharacterTitle(character.name),
         ],
-        rank: zone.rank + character.rank,
+        rank: toNumber(zone.rank) + toNumber(character.rank),
         ...sharedAttributes,
       })
       await sleep(500)

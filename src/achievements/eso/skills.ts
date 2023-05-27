@@ -1,6 +1,8 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 
+import { toNumber } from 'lodash'
+
 import { sleep } from '../../helpers'
 import database from '../../modules/database'
 import { findOrCreateNotionAchievement } from '../helpers'
@@ -74,7 +76,7 @@ export const createSkillLineAchievements = async () => {
           getCharacterTitle(character.name),
         ],
         target: skill.target,
-        rank: skill.rank + character.rank,
+        rank: toNumber(skill.rank) + toNumber(character.rank),
         ...sharedAttributes,
       })
       await sleep(500)
