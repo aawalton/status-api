@@ -28,7 +28,7 @@ export type Achievement =
       parentTitle?: string
       parentTitles?: string[]
       children?: Array<BlockObjectRequest>
-      tags?: string[]
+      tags?: readonly string[]
     }
   | {
       title: string
@@ -43,5 +43,5 @@ export type Achievement =
       parentTitle?: string
       parentTitles?: string[]
       children?: Array<BlockObjectRequest>
-      tags?: string[]
+      tags?: readonly string[]
     }

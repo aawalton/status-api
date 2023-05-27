@@ -1,6 +1,5 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-import _ from 'lodash'
 
 import { sleep } from '../../helpers'
 import database from '../../modules/database'
@@ -10,6 +9,7 @@ const sharedAttributes = {
   category: 'Fun',
   format: 'Automatic',
   circle: 'Solo',
+  tags: ['Elder Scrolls Online'],
 } as const
 
 export const createSkillLineAchievements = async () => {
@@ -48,12 +48,11 @@ export const createSkillLineAchievements = async () => {
   /* Find or create achievements for skill lines */
   const getSkillLineTitle = (skillLine: string) =>
     `Complete ${skillLine} Skill Line for All Characters`
-  const skillLevels = await database.esoSkills.findAll()
-  const skillLines = _.uniq(skillLevels.map((skill) => skill.skillLine))
+  const skills = await database.esoSkills.findAll()
   await Promise.all(
-    skillLines.map((skillLine) =>
+    skills.map((skill) =>
       findOrCreateNotionAchievement({
-        title: getSkillLineTitle(skillLine),
+        title: getSkillLineTitle(skill.skillLine),
         type: 'Collection',
         parentTitle,
         ...sharedAttributes,
@@ -63,33 +62,19 @@ export const createSkillLineAchievements = async () => {
 
   /* Find or create achievements for characters / skill lines */
   for (const character of characters) {
-    for (const skillLine of skillLines) {
-      const characterSkillLineTitle = `Complete ${skillLine} Skill Line for ${character.name}`
+    for (const skill of skills) {
+      const characterSkillLineTitle = `Complete ${skill.skillLine} Skill Line for ${character.name}`
       await findOrCreateNotionAchievement({
         title: characterSkillLineTitle,
-        type: 'Sequence',
+        type: 'Integer',
         parentTitles: [
-          getSkillLineTitle(skillLine),
+          getSkillLineTitle(skill.skillLine),
           getCharacterTitle(character.name),
         ],
+        target: skill.target,
         ...sharedAttributes,
       })
       await sleep(500)
-      const skillLineLevels = await database.esoSkills.findAll({
-        where: { skillLine },
-      })
-      for (const skillLineLevel of skillLineLevels) {
-        const skillLineLevelTitle = `Complete ${skillLineLevel.skillLine} Level ${skillLineLevel.level} for ${character.name} `
-        await findOrCreateNotionAchievement({
-          title: skillLineLevelTitle,
-          type: 'Integer',
-          target: skillLineLevel.target,
-          parentTitle: characterSkillLineTitle,
-          rank: skillLineLevel.level,
-          ...sharedAttributes,
-        })
-        await sleep(500)
-      }
     }
   }
 }
