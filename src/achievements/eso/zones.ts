@@ -40,6 +40,7 @@ export const createZoneAchievements = async () => {
         title: getCharacterTitle(character.name),
         type: 'Collection',
         parentTitle,
+        rank: character.rank,
         ...sharedAttributes,
       })
     )
@@ -55,6 +56,7 @@ export const createZoneAchievements = async () => {
         title: getZoneTitle(zone.name),
         type: 'Collection',
         parentTitle,
+        rank: zone.rank,
         ...sharedAttributes,
       })
     )
@@ -71,6 +73,7 @@ export const createZoneAchievements = async () => {
           getZoneTitle(zone.name),
           getCharacterTitle(character.name),
         ],
+        rank: zone.rank + character.rank,
         ...sharedAttributes,
       })
       await sleep(500)
