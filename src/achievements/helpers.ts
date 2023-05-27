@@ -81,7 +81,7 @@ export const findOrCreateNotionAchievement = async (
         },
         Rank: {
           type: 'number',
-          number: achievement.rank ?? 0,
+          number: _.toNumber(achievement.rank) || 0,
         },
         Type: {
           type: 'select',
