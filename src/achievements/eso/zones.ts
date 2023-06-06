@@ -14,7 +14,7 @@ const sharedAttributes = {
   tags: ['Elder Scrolls Online'],
 } as const
 
-export const createZoneAchievements = async () => {
+const createZoneAchievements = async () => {
   /* Find or create category achievement */
   const categoryTitle = 'Complete Elder Scrolls Online'
   await findOrCreateNotionAchievement({
@@ -82,3 +82,5 @@ export const createZoneAchievements = async () => {
     }
   }
 }
+
+void createZoneAchievements()

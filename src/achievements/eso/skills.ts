@@ -14,7 +14,7 @@ const sharedAttributes = {
   tags: ['Elder Scrolls Online'],
 } as const
 
-export const createSkillLineAchievements = async () => {
+const createSkillLineAchievements = async () => {
   /* Find or create category achievement */
   const categoryTitle = 'Complete Elder Scrolls Online'
   await findOrCreateNotionAchievement({
@@ -83,3 +83,5 @@ export const createSkillLineAchievements = async () => {
     }
   }
 }
+
+void createSkillLineAchievements()
