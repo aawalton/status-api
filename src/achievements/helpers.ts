@@ -70,15 +70,6 @@ export const findOrCreateNotionAchievement = async (
           },
         },
       })
-      if (newTarget > 0) {
-        console.log(result)
-        console.log({
-          title: achievement.title,
-          progress: achievement.progress,
-          newTarget,
-          newProgress,
-        })
-      }
       return achievement.title
     }
 
