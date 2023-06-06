@@ -8,11 +8,12 @@ export interface esoZonesAttributes {
   updatedAt: Date;
   deletedAt?: Date;
   rank: number;
+  target?: number;
 }
 
 export type esoZonesPk = "id";
 export type esoZonesId = esoZones[esoZonesPk];
-export type esoZonesOptionalAttributes = "id" | "createdAt" | "updatedAt" | "deletedAt";
+export type esoZonesOptionalAttributes = "id" | "createdAt" | "updatedAt" | "deletedAt" | "target";
 export type esoZonesCreationAttributes = Optional<esoZonesAttributes, esoZonesOptionalAttributes>;
 
 export class esoZones extends Model<esoZonesAttributes, esoZonesCreationAttributes> implements esoZonesAttributes {
@@ -22,6 +23,7 @@ export class esoZones extends Model<esoZonesAttributes, esoZonesCreationAttribut
   updatedAt!: Date;
   deletedAt?: Date;
   rank!: number;
+  target?: number;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof esoZones {
@@ -56,6 +58,10 @@ export class esoZones extends Model<esoZonesAttributes, esoZonesCreationAttribut
     rank: {
       type: DataTypes.DECIMAL,
       allowNull: false
+    },
+    target: {
+      type: DataTypes.DECIMAL,
+      allowNull: true
     }
   }, {
     sequelize,
