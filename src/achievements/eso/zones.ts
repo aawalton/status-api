@@ -76,6 +76,7 @@ const createZoneAchievements = async () => {
           getCharacterTitle(character.name),
         ],
         rank: toNumber(zone.rank) + toNumber(character.rank),
+        target: zone.target,
         ...sharedAttributes,
       })
       await sleep(500)
