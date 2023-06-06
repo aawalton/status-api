@@ -46,7 +46,19 @@ export const findOrCreateNotionAchievement = async (
       },
     })
     const alreadyExists = response.results.length > 0
-    if (alreadyExists) return achievement.title
+    if (alreadyExists) {
+      const newTarget =
+        achievement.type === 'Boolean' ? 1 : achievement.target || 0
+      await notion.pages.update({
+        page_id: response.results[0].id,
+        properties: {
+          Target: {
+            number: newTarget,
+          },
+        },
+      })
+      return achievement.title
+    }
 
     /* Find the parent achievements */
     const parentTitleId = achievement.parentTitle
