@@ -70,13 +70,13 @@ const createZoneAchievements = async () => {
       const title = `Complete Zone ${zone.name} for ${character.name}`
       await findOrCreateNotionAchievement({
         title,
-        type: 'Boolean',
+        type: 'Integer',
         parentTitles: [
           getZoneTitle(zone.name),
           getCharacterTitle(character.name),
         ],
         rank: toNumber(zone.rank) + toNumber(character.rank),
-        target: zone.target,
+        target: toNumber(zone.target) ?? 1,
         ...sharedAttributes,
       })
       await sleep(500)

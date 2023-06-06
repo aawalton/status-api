@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { Client } from '@notionhq/client'
 import dotenv from 'dotenv'
-import _ from 'lodash'
+import _, { toNumber } from 'lodash'
 
 import { Achievement } from './types'
 import { achievements } from '../../generated/tables/achievements'
@@ -46,17 +46,39 @@ export const findOrCreateNotionAchievement = async (
       },
     })
     const alreadyExists = response.results.length > 0
+
+    /* If it already exists, update it */
     if (alreadyExists) {
+      const result = response.results[0] as unknown as {
+        properties: { Progress: { number: number } }
+      }
       const newTarget =
         achievement.type === 'Boolean' ? 1 : achievement.target || 0
+      const oldProgress = toNumber(result.properties.Progress.number)
+      const newProgress = newTarget > 0 && oldProgress > 0 ? newTarget : 0
+
       await notion.pages.update({
         page_id: response.results[0].id,
         properties: {
           Target: {
+            type: 'number',
             number: newTarget,
+          },
+          Progress: {
+            type: 'number',
+            number: newProgress,
           },
         },
       })
+      if (newTarget > 0) {
+        console.log(result)
+        console.log({
+          title: achievement.title,
+          progress: achievement.progress,
+          newTarget,
+          newProgress,
+        })
+      }
       return achievement.title
     }
 
