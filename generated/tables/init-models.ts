@@ -19,6 +19,10 @@ import { conquerorChallenges as _conquerorChallenges } from "./conquerorChalleng
 import type { conquerorChallengesAttributes, conquerorChallengesCreationAttributes } from "./conquerorChallenges";
 import { esoCharacters as _esoCharacters } from "./esoCharacters";
 import type { esoCharactersAttributes, esoCharactersCreationAttributes } from "./esoCharacters";
+import { esoCompanionSkills as _esoCompanionSkills } from "./esoCompanionSkills";
+import type { esoCompanionSkillsAttributes, esoCompanionSkillsCreationAttributes } from "./esoCompanionSkills";
+import { esoCompanions as _esoCompanions } from "./esoCompanions";
+import type { esoCompanionsAttributes, esoCompanionsCreationAttributes } from "./esoCompanions";
 import { esoSkills as _esoSkills } from "./esoSkills";
 import type { esoSkillsAttributes, esoSkillsCreationAttributes } from "./esoSkills";
 import { esoZones as _esoZones } from "./esoZones";
@@ -49,6 +53,8 @@ export {
   _audibleBooks as audibleBooks,
   _conquerorChallenges as conquerorChallenges,
   _esoCharacters as esoCharacters,
+  _esoCompanionSkills as esoCompanionSkills,
+  _esoCompanions as esoCompanions,
   _esoSkills as esoSkills,
   _esoZones as esoZones,
   _exercises as exercises,
@@ -81,6 +87,10 @@ export type {
   conquerorChallengesCreationAttributes,
   esoCharactersAttributes,
   esoCharactersCreationAttributes,
+  esoCompanionSkillsAttributes,
+  esoCompanionSkillsCreationAttributes,
+  esoCompanionsAttributes,
+  esoCompanionsCreationAttributes,
   esoSkillsAttributes,
   esoSkillsCreationAttributes,
   esoZonesAttributes,
@@ -112,6 +122,8 @@ export function initModels(sequelize: Sequelize) {
   const audibleBooks = _audibleBooks.initModel(sequelize);
   const conquerorChallenges = _conquerorChallenges.initModel(sequelize);
   const esoCharacters = _esoCharacters.initModel(sequelize);
+  const esoCompanionSkills = _esoCompanionSkills.initModel(sequelize);
+  const esoCompanions = _esoCompanions.initModel(sequelize);
   const esoSkills = _esoSkills.initModel(sequelize);
   const esoZones = _esoZones.initModel(sequelize);
   const exercises = _exercises.initModel(sequelize);
@@ -144,6 +156,8 @@ export function initModels(sequelize: Sequelize) {
     audibleBooks: audibleBooks,
     conquerorChallenges: conquerorChallenges,
     esoCharacters: esoCharacters,
+    esoCompanionSkills: esoCompanionSkills,
+    esoCompanions: esoCompanions,
     esoSkills: esoSkills,
     esoZones: esoZones,
     exercises: exercises,
